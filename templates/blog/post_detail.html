@@ -1,0 +1,86 @@
+{% extends './base.html' %}
+{% block title %}post detail{% endblock %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block contect %}
+<div class="container">
+    <div class="row mt-5 pt-3">
+        <div class="col-md-8 offset-md-2">
+            <div style="background-color: #13171f;" class="card my-3 shadow">
+                <div class="card-body">
+                    <div class="col-md-4">
+                        <img src="{{ post.user.profilemodel.user_image.url }}" alt="profile-img">
+                    </div>
+                    <div class="col-md-8">
+                        {{ post.date_stamp }}
+                        {% if post.author.user == request.user %}
+                            <span><a class="btn btn-primary float-right btn-sm" href="{% url 'post_edit' post.id %}">edit</a></span>
+                            <span><a class="btn btn-danger btn-sm" href="{% url 'delete' post.id %}">delete</a></span>
+                        {% endif %}
+                        <hr>
+                        <h4>{{ post.title }}</h4>
+                        <p>{{ post.content|safe }}</p>
+                    </div>
+                    <form action="{% url 'like_post' post.id %}" method="POST">
+                        {% csrf_token %}
+                        <button type="submit" name="post_id" value="{{ post.id }}">
+                            <svg style="color: black;" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-heart" viewBox="0 0 16 16">
+                                <path d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01L8 2.748zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143c.06.055.119.112.176.171a3.12 3.12 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15z" />
+                            </svg> {{ total_likes }} likes
+                        </button>
+                    </form>
+                    <div class="">
+                        <div class="text-dark"> <!--card-->
+                            <div style="background-color: #13171f;" class="p-4"> <!--card-->
+                                <h4 class="mb-0">Recent comments: {{ post.comment_cout }}</h4>
+                                {% if user.is_authenticated %}
+                                <form method="POST">
+                                    {% csrf_token %}
+                                    {{ c_form.media }}
+                                    {{ c_form|crispy }}
+                                    <input class="btn btn-danger btn-sm" type="submit" value="pulish">
+                                </form>
+                                {% else %}
+                                <div class="alert alert-danger" role="alert">
+                                    not login in
+                                </div>
+                                {% endif %}
+                                <br>
+                                {% for comment in post.commentmodel_set.all %}
+                                <div class="d-flex flex-start">
+                                    <img class="rounded-circle shadow-1-strong me-3"
+                                        src="{{ comment.user.profilemodel.user_image.url }}" alt="avatar"
+                                        width="60" height="60" />
+                                    <div>
+                                        <h6 class="fw-bold mb-1">{{ comment.user }}</h6>
+                                        <div class="d-flex align-items-center mb-3">
+                                            <p class="mb-0">
+                                                March 07, 2021
+                                            </p>
+                                            <a href="#!" class="link-muted"><i class="fas fa-pencil-alt ms-2"></i></a>
+                                            <a href="#!" class="link-muted"><i class="fas fa-redo-alt ms-2"></i></a>
+                                            <form action="{% url 'like_post' post.id %}" method="POST">
+                                                {% csrf_token %}
+                                                <a type="submit" name="post_id" value="{{ post.id }}">
+                                                    <svg style="color: white;" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-heart" viewBox="0 0 16 16">
+                                                        <path d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01L8 2.748zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143c.06.055.119.112.176.171a3.12 3.12 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15z" />
+                                                    </svg>
+                                                </a>
+                                            </form>
+                                        </div>
+                                        <p class="mb-0">{{ comment.content|safe }}</p>
+                                    </div>
+                                </div>
+
+                                <hr style="color: white;">
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

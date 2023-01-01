@@ -1,0 +1,64 @@
+{% extends './base.html' %}
+{% load static %}
+{% load humanize %}
+{% load crispy_forms_tags %}
+
+{% block contect %}
+<div class="container">
+    <div class="row mt-5 pt-3">
+        <div class="col-md-6 offset-md-3">
+            <div class="cards-body">
+                <span style="color: white;" class="h4">Profile Page</span>
+                <span class="float-right">
+                    <!-- Button trigger modal -->
+                    <button type="button" class="btn btn-info float-right btn-sm" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+                        edit profile
+                    </button>
+                </span>
+                
+                <hr>
+                <div class="row">
+                    <div class="col-md-4">
+                        <img class="img-thumbnail" src="{{ user.profilemodel.user_image.url }}" alt="profile-img">
+                    </div>
+                    <div class="col-md-8">
+                        <h6>@: {{ user.first_name }} </h6>
+                        <h6>name: {{ user.username }} </h6>
+                        <h6>email: {{ user.email }} </h6>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+  
+  <!-- Modal -->
+  <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="staticBackdropLabel">edit profile information</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="row">
+            <div class="col-md-4">
+                <img class="img-thumbnail" src="{{ user.profilemodel.user_image.url }}" alt="">
+            </div>
+            <div class="col-md-8">
+                <form method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    {{ u_form|crispy }}
+                    {{ p_form|crispy }}
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary btn-sm">save</button>
+                      </div>
+                </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

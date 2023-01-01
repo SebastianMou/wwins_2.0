@@ -1,0 +1,192 @@
+{% extends './base.html' %}
+{% load static %}
+{% load humanize %}
+{% load crispy_forms_tags %}
+
+{% block contect %}
+<script src="{% static 'ckeditor/ckeditor-init.js' %}"></script>
+<script src="{% static 'ckeditor/ckeditor/ckeditor.js' %}"></script>
+
+<style>
+    .col-12 {
+        padding-right: 36px;
+        padding-left: 36px;
+    }
+
+    .card {
+        background-color: #13171f;
+    }
+
+    span,
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6,
+    p,
+    small {
+        color: white;
+    }
+    .form_register {
+        border:1px solid gray;
+    }
+    .form_register:hover {
+        border: 1px solid #03dac5;
+    }
+</style>
+<section id="hero-animated">
+    <div class="row">
+        <div class="col-12 col-md-3">
+
+                <div class="card testimonial-card c mb-3">
+                    <div class="card-up aqua-gradient"></div>
+                    <div class="image-cropper avatar mx-auto white">
+                        <img src="{{ request.user.profilemodel.user_image.url }}" class="rounded-circle img-fluid">
+                    </div>
+                    <div class="card-body text-center">
+                        <h4 class="card-title">{{ request.user.first_name }}</h4>
+                        <span class="card-title">@{{ request.user }}</span>
+
+                        <div class="twPc-divStats">
+                            <ul class="twPc-Arrange">
+                                <li class="twPc-ArrangeSizeFit">
+                                    <a href="https://twitter.com/mertskaplan" title="9.840 Tweet">
+                                        <span class="twPc-StatLabel twPc-block">Tweets</span>
+                                        <span class="twPc-StatValue">9.840</span>
+                                    </a>
+                                </li>
+                                <li class="twPc-ArrangeSizeFit">
+                                    <a href="https://twitter.com/mertskaplan/following" title="885 Following">
+                                        <span class="twPc-StatLabel twPc-block">Following</span>
+                                        <span class="twPc-StatValue">885</span>
+                                    </a>
+                                </li>
+                                <li class="twPc-ArrangeSizeFit">
+                                    <a href="https://twitter.com/mertskaplan/followers" title="1.810 Followers">
+                                        <span class="twPc-StatLabel twPc-block">Followers</span>
+                                        <span class="twPc-StatValue">1.810</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                        <hr style="color: white;">
+                        <p><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="currentColor" class="bi bi-quote" viewBox="0 0 16 16">
+                            <path d="M12 12a1 1 0 0 0 1-1V8.558a1 1 0 0 0-1-1h-1.388c0-.351.021-.703.062-1.054.062-.372.166-.703.31-.992.145-.29.331-.517.559-.683.227-.186.516-.279.868-.279V3c-.579 0-1.085.124-1.52.372a3.322 3.322 0 0 0-1.085.992 4.92 4.92 0 0 0-.62 1.458A7.712 7.712 0 0 0 9 7.558V11a1 1 0 0 0 1 1h2Zm-6 0a1 1 0 0 0 1-1V8.558a1 1 0 0 0-1-1H4.612c0-.351.021-.703.062-1.054.062-.372.166-.703.31-.992.145-.29.331-.517.559-.683.227-.186.516-.279.868-.279V3c-.579 0-1.085.124-1.52.372a3.322 3.322 0 0 0-1.085.992 4.92 4.92 0 0 0-.62 1.458A7.712 7.712 0 0 0 3 7.558V11a1 1 0 0 0 1 1h2Z"/>
+                          </svg>{{ request.user.profilemodel.bio }}</p>
+
+                    </div>
+                </div>
+
+        </div>
+        <div class="col-12 col-md-6">
+            <div class="card mb-3">
+                <div class="card-header d-flex align-items-center">
+                    <img src="{{ user.profilemodel.user_image.url }}" class="rounded-circle mr-3" width="50"
+                        height="50">
+                    <div class="d-flex flex-column">
+                        <h5 class="card-title mb-0">{{ request.user }}</h5>
+                        <span>@{{ request.user.first_name }}</span>
+                    </div>
+                </div>
+                <form method="POST">
+                    {% csrf_token %}
+                    {{form.media}}
+                    {{ form.title }}
+                    {{ form.content }}
+                    <div class="card-footer d-flex align-items-center">
+                        <input type="submit" value="post" class="btn btn-primary btn-lg"></input>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="col-12 col-md-3">
+            <div class="card">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">First</th>
+                            <th scope="col">Last</th>
+                            <th scope="col">Handle</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <th scope="row">1</th>
+                            <td>Mark</td>
+                            <td>Otto</td>
+                            <td>@mdo</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">2</th>
+                            <td>Jacob</td>
+                            <td>Thornton</td>
+                            <td>@fat</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">2</th>
+                            <td>Jacob</td>
+                            <td>Thornton</td>
+                            <td>@fat</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">2</th>
+                            <td>Jacob</td>
+                            <td>Thornton</td>
+                            <td>@fat</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <br>
+            <div class="card">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">First</th>
+                            <th scope="col">Last</th>
+                            <th scope="col">Handle</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <th scope="row">1</th>
+                            <td>Mark</td>
+                            <td>Otto</td>
+                            <td>@mdo</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">2</th>
+                            <td>Jacob</td>
+                            <td>Thornton</td>
+                            <td>@fat</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">2</th>
+                            <td>Jacob</td>
+                            <td>Thornton</td>
+                            <td>@fat</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">2</th>
+                            <td>Jacob</td>
+                            <td>Thornton</td>
+                            <td>@fat</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>
+  
+
+<script>
+    CKEDITOR.editorConfig = function (config) {
+        config.language = 'fr';
+        config.uiColor = 'black';
+    };
+</script>
+{% endblock %}

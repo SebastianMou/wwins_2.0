@@ -1,0 +1,37 @@
+{% extends '../base.html' %}
+{% load static %}
+
+{% block contect %}
+<style>
+    .form_register {
+        border-radius: 28px;
+        border:1px solid gray;
+    }
+    .form_register:hover {
+        border: 1px solid #03dac5;
+    }
+</style>
+<section id="hero-animated">
+    <div class="box-register">
+        <div class="form-register">
+            <h1>register</h1>
+            <form method="POST">
+                {% csrf_token %}
+                {{ form.first_name }}
+                <br>
+                {{ form.username }}
+                <br>
+                {{ form.email }}
+                <br>
+                {{ form.password1 }}
+                <br>
+                {{ form.password2 }}
+                <br>
+                <input class="form-control btn btn-info" type="submit" value="register">
+            </form>
+            <br>
+            <p align="center">Already have a account? <a href="{% url 'login' %}">login</a></p>
+        </div>
+    </div>
+</section>
+{% endblock %}

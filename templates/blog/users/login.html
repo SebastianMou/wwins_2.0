@@ -1,0 +1,38 @@
+{% extends '../base.html' %}
+{% load crispy_forms_tags %}
+{% load static %}
+
+{% block contect %}
+<style>
+    .form_register {
+        border-radius: 28px;
+        border:1px solid gray;
+    }
+    .form_register:hover {
+        border: 1px solid #03dac5;
+    }
+</style>
+<br><br><br><br>
+<section id="hero-animated">
+    <br>
+    <div class="box-login">
+        <div class="form">
+            <form method="POST">
+                <h1 style="color: #03dac5; padding: 5px;" align="center">Login</h1>
+                {% csrf_token %}
+                <input type="text" name="username" class="form_register form-control bg-dark text-white" placeholder="Username">
+                <br>
+                <input type="password" name="password" class="form_register form-control bg-dark text-white" placeholder="password">
+                {% if form.errors %}
+                    <p>username or password incorect</p>
+                {% endif %}
+                <br>
+                <input class="form-control btn btn-info" type="submit" value="login">
+                <br>
+                <p align="center">dont have a account <a href="{% url 'register' %}">register</a></p>
+                <p align="center">did you forget you password <a href="{% url 'password_reset' %}">forgot password?</a></p>
+            </form>
+        </div>
+    </div>
+</section>
+{% endblock %}
