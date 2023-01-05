@@ -9,8 +9,8 @@
 
 <style>
     .col-12 {
-        padding-right: 36px;
-        padding-left: 36px;
+        padding-right: 30px;
+        padding-left: 30px;
     }
 
     .card {
@@ -144,7 +144,7 @@
                         <span id="like-count">789</span>
     
                         {% if request.user == post.user %}
-                        <a style="position: absolute; bottom: 0; right: 0; padding: 8px; color: red;" href="">
+                        <a style="position: absolute; bottom: 0; right: 0; padding: 8px; color: red;" href="{% url 'delete' post.id %}">
                             <svg xmlns="http://www.w3.org/2000/svg" width="19" height="19" fill="currentColor"
                                 class="bi bi-trash3" viewBox="0 0 16 16">
                                 <path
@@ -164,8 +164,24 @@
                      <button style="width: 100%;" type="button" class="btn btn-secondary">Principios de la Comunidad</button>
                 </div>
               </div>
-            <br>
-
+              <br>
+                <div class="card">
+                    <div class="card-body">
+                        <h5>Submit a Complaint</h5>
+                        <form>
+                            <div class="form-group">
+                                <input type="text" class="form-control" id="name" placeholder="Enter your name">
+                            </div>
+                            <div class="form-group">
+                                <input type="email" class="form-control" id="email" placeholder="Enter your email">
+                            </div>
+                            <div class="form-group">
+                                <textarea class="form-control" id="complaint" rows="3"></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Submit</button>
+                        </form>
+                    </div>
+                </div>
         </div>
     </div>
 </section>

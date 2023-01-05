@@ -42,7 +42,6 @@ INSTALLED_APPS = [
     'crispy_forms',
     'ckeditor',
     'blog',
-
 ]
 
 JAZZMIN_UI_TWEAKS = {
@@ -84,6 +83,7 @@ CKEDITOR_CONFIGS = {
         'uiColor': '#48A3BD',
         'toolbarCanCollapse': True,
         'width': 'auto',
+        'height': '120px',
         'toolbar_Basic': [
             ['Source', '-', 'Bold', 'Italic']
         ],
@@ -93,7 +93,7 @@ CKEDITOR_CONFIGS = {
             {'name': 'basicstyles',
              'items': ['Bold', 'Italic', 'Underline', 'Strike', '-', 'RemoveFormat']},
             {'name': 'paragraph',
-             'items': ['NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', '-', 'Blockquote', '-',
+             'items': ['NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', '-',
                        'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock', '-']},
             {'name': 'links', 'items': ['Link', 'Unlink']},
             {
@@ -220,7 +220,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, "static")
+    os.path.join(BASE_DIR, 'static/')
 ]
 
 # Default primary key field type
@@ -228,9 +228,12 @@ STATICFILES_DIRS = [
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-EMAIL_BACKEND = ''
-EMAIL_HOST = ''
-EMAIL_HOST_USER = ''
-EMAIL_HOST_PASSWORD = ''
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = 'ensocio.mx@gmail.com'
+EMAIL_HOST_PASSWORD = 'qtgtupjwhcfiomsl'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
+
+PASSWORD_RESET_TIMEOUT = 14400
+
