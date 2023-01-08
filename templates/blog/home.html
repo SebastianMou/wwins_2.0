@@ -6,7 +6,6 @@
 {% block contect %}
 <script src="{% static 'ckeditor/ckeditor-init.js' %}"></script>
 <script src="{% static 'ckeditor/ckeditor/ckeditor.js' %}"></script>
-
 <style>
     .col-12 {
         padding-right: 30px;
@@ -50,6 +49,13 @@
     .myButton:active {
         position: relative;
         top: 1px;
+    }
+    .form_register {
+        border-radius: 28px;
+        border:1px solid gray;
+    }
+    .form_register:hover {
+        border: 1px solid #03dac5;
     }
 </style>
 
@@ -168,17 +174,15 @@
                 <div class="card">
                     <div class="card-body">
                         <h5>Submit a Complaint</h5>
-                        <form>
-                            <div class="form-group">
-                                <input type="text" class="form-control" id="name" placeholder="Enter your name">
+                        <form method="POST">
+                            {% csrf_token %}
+                            <div style="padding: 5px;" class="form-group">
+                                <input name="email" type="email" class="form_register form-control bg-dark text-white" id="email" placeholder="Email">
                             </div>
-                            <div class="form-group">
-                                <input type="email" class="form-control" id="email" placeholder="Enter your email">
+                            <div style="padding: 5px;" class="form-group">
+                                <textarea name="message" class="form_register form-control bg-dark text-white" id="complaint" placeholder="Message" rows="3"></textarea>
                             </div>
-                            <div class="form-group">
-                                <textarea class="form-control" id="complaint" rows="3"></textarea>
-                            </div>
-                            <button type="submit" class="btn btn-primary">Submit</button>
+                            <button style="padding: 9px;" type="submit" class="form-control btn btn-info">Submit</button>
                         </form>
                     </div>
                 </div>

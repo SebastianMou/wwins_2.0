@@ -7,6 +7,7 @@ from django.contrib import messages
 from django.shortcuts import get_object_or_404
 from django.http import HttpResponseRedirect
 from django.urls import reverse
+from django.core.mail import send_mail
 
 from django.template.loader import render_to_string
 from django.contrib.sites.shortcuts import get_current_site
@@ -18,11 +19,26 @@ from django.contrib.auth import get_user_model
 from .tokens import account_activation_token
 
 # Create your views here.
-
 def home_info(request):
     return render(request, 'blog/home_info.html')
 
 def home(request):
+    if request.method == 'POST':
+        email = request.POST.get('email')
+        message = request.POST.get('message')
+        data = {
+            'complaint': 'complaint form WWINS',
+            'email': email,
+            'message': message, 
+        }
+        message = '''
+        Form: {}
+
+        New message: {}
+        '''.format(data['email'], data['message'])
+        send_mail(data['complaint'], message, '', ['ensocio.mx@gmail.com'])
+        return render(request, 'blog/email_sent.html')
+
     posts = PostModel.objects.all()
     context = {
         'posts': posts,
