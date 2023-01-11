@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from .models import PostModel
 from .forms import UserRegisterForm, PostForm, UserUpdateForm, ProfileUpdateForm, PostUpdateForm, CommentForm
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import authenticate, login, logout, get_user_model
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.shortcuts import get_object_or_404
@@ -133,33 +133,45 @@ def register(request):
     }
     return render(request, 'blog/users/register.html', context)
 
-def profile(request):
+@login_required
+def profile(request, username):
     if request.method == 'POST':
-        u_form = UserUpdateForm(request.POST or None, instance=request.user)
+        user = request.user
+        u_form = UserUpdateForm(request.POST or None, instance=user)
         p_form = ProfileUpdateForm(request.POST or None, request.FILES or None, instance=request.user.profilemodel)
         if u_form.is_valid() and p_form.is_valid():
-            u_form.save()
+            user_form = u_form.save()
             p_form.save()
-            return redirect('profile')
+            messages.success(request, f'{user_form.username}, Your profile has been updated!')
+            return redirect('profile', user_form.username)
     else:
         u_form = UserUpdateForm(instance=request.user)
         p_form = ProfileUpdateForm(instance=request.user.profilemodel)
+
+    user = get_user_model().objects.filter(username=username).first()
+    if user:
+        u_form = UserUpdateForm(instance=user)
+
     context = {
         'u_form': u_form,
-        'p_form': p_form,
+        # 'p_form': p_form,
     }
     return render(request, 'blog/profile.html', context)
 
 def like_post(request, pk):
-    post = get_object_or_404(PostModel, id=request.POST.get('post_id'))
-    post.likes.add(request.user)
-    return HttpResponseRedirect(reverse('post_detail', args=[str(pk)]))
+    post = get_object_or_404(PostModel, id=pk)
+    if post.likes.filter(id=request.user.id).exists():
+        post.likes.remove(request.user)
+    else:
+        post.likes.add(request.user)
 
-@login_required
+    return HttpResponseRedirect(reverse('post_detail', args=[pk]))
+
 def post_detail(request, pk):
     likes_connected = get_object_or_404(PostModel, id=pk)
+
     liked = False
-    if likes_connected.likes.filter(id=request.user.id).exists():
+    if likes_connected.likes.filter(id=pk).exists():
         liked = True
 
     post = PostModel.objects.get(id=pk)

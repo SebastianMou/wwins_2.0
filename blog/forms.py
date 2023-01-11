@@ -3,6 +3,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from .models import PostModel, ProfileModel, CommentModel
 from ckeditor.fields import RichTextField
+from django.contrib.auth import get_user_model
 
 
 class UserRegisterForm(UserCreationForm):
@@ -44,15 +45,19 @@ class PostForm(forms.ModelForm):
 class UserUpdateForm(forms.ModelForm):
     username = forms.CharField(widget=forms.TextInput(attrs={
         'class': 'form_register form-control bg-dark text-white',
-        'placeholder': 'password1',
+        'placeholder': 'username',
     }))
     email = forms.CharField(widget=forms.TextInput(attrs={
         'class': 'form_register form-control bg-dark text-white',
         'placeholder': 'password1',
     }))
+    bio = forms.CharField(widget=forms.TextInput(attrs={
+        'class': 'form_register form-control bg-dark text-white',
+        'placeholder': 'quote',
+    }))
     class Meta:
-        model = User
-        fields = ['username', 'email']
+        model = get_user_model()
+        fields = ['username', 'email', 'bio']
 
     def __init__(self, *args, **kwargs):
         super(UserUpdateForm, self).__init__(*args, **kwargs)
