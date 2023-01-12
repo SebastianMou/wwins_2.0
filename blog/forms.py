@@ -51,13 +51,9 @@ class UserUpdateForm(forms.ModelForm):
         'class': 'form_register form-control bg-dark text-white',
         'placeholder': 'password1',
     }))
-    bio = forms.CharField(widget=forms.TextInput(attrs={
-        'class': 'form_register form-control bg-dark text-white',
-        'placeholder': 'quote',
-    }))
     class Meta:
         model = get_user_model()
-        fields = ['username', 'email', 'bio']
+        fields = ['username', 'email']
 
     def __init__(self, *args, **kwargs):
         super(UserUpdateForm, self).__init__(*args, **kwargs)

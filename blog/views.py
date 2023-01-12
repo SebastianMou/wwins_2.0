@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
 from .models import PostModel
+from django.contrib.auth.models import User
 from .forms import UserRegisterForm, PostForm, UserUpdateForm, ProfileUpdateForm, PostUpdateForm, CommentForm
 from django.contrib.auth import authenticate, login, logout, get_user_model
 from django.contrib.auth.decorators import login_required
@@ -133,29 +134,41 @@ def register(request):
     }
     return render(request, 'blog/users/register.html', context)
 
+def user_profile(request, user_id):
+    user = get_object_or_404(User, id=user_id)
+    posts = PostModel.objects.filter(user=user)
+    context = {'user': user, 'posts': posts}
+    return render(request, 'users/user_profile.html', context)
+
 @login_required
 def profile(request, username):
+    # posts = request.user.PostModel.all()
+    posts = PostModel.objects.all()
+    posts = posts.filter(user=request.user)
+
     if request.method == 'POST':
         user = request.user
         u_form = UserUpdateForm(request.POST or None, instance=user)
-        p_form = ProfileUpdateForm(request.POST or None, request.FILES or None, instance=request.user.profilemodel)
-        if u_form.is_valid() and p_form.is_valid():
+        # p_form = ProfileUpdateForm(request.POST or None, request.FILES or None, instance=request.user.profilemodel)
+        if u_form.is_valid():
             user_form = u_form.save()
-            p_form.save()
             messages.success(request, f'{user_form.username}, Your profile has been updated!')
             return redirect('profile', user_form.username)
     else:
         u_form = UserUpdateForm(instance=request.user)
-        p_form = ProfileUpdateForm(instance=request.user.profilemodel)
-
-    user = get_user_model().objects.filter(username=username).first()
-    if user:
-        u_form = UserUpdateForm(instance=user)
+        # p_form = ProfileUpdateForm(instance=request.user.profilemodel)
 
     context = {
         'u_form': u_form,
         # 'p_form': p_form,
+        'posts': posts,
     }
+
+    user = get_user_model().objects.filter(username=username).first()
+    if user:
+        u_form = UserUpdateForm(instance=user)
+        return render(request, 'blog/profile.html', context)
+
     return render(request, 'blog/profile.html', context)
 
 def like_post(request, pk):
