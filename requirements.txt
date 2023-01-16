@@ -7,4 +7,5 @@ django-js-asset==2.0.0
 django-messages==0.6.0
 Pillow==9.3.0
 pytz==2022.7
+six==1.16.0
 sqlparse==0.4.3

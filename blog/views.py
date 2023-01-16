@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
-from .models import PostModel
+from .models import PostModel, Category
 from django.contrib.auth.models import User
-from .forms import UserRegisterForm, PostForm, UserUpdateForm, ProfileUpdateForm, PostUpdateForm, CommentForm
+from .forms import UserRegisterForm, PostForm, UserUpdateForm, ProfileUpdateForm, PostUpdateForm, CommentForm, CategoryForm
 from django.contrib.auth import authenticate, login, logout, get_user_model
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
@@ -46,6 +46,31 @@ def home(request):
     }
     return render(request, 'blog/home.html', context)
 
+def categories(request):
+    return {
+        'categories': Category.objects.all()
+    }
+
+def create_category(request):
+    if request.method == 'POST':
+        form = CategoryForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('create_category')
+    else:
+        form = CategoryForm()
+    return render(request, 'blog/create_category.html', {'form': form})
+
+
+def category_list(request, category_slug):
+    category = get_object_or_404(Category, slug=category_slug)
+    posts = PostModel.objects.filter(category=category)
+    context = {
+        'category': category,
+        'posts': posts,
+    }
+    return render(request, 'blog/category.html', context)
+
 def login_user(request):
     if request.method == 'POST':
         username = request.POST['username']
@@ -70,7 +95,12 @@ def create_post(request):
     if request.method == 'POST':
         form = PostForm(request.POST)
         if form.is_valid():
+            # get the category instance
+            category_name = form.cleaned_data['category']
+            category = Category.objects.get(name=category_name)
+            # assign the category instance to the post
             post = form.save(commit=False)
+            post.category = category
             post.user = request.user
             post.save()
             return redirect('home')
@@ -137,8 +167,11 @@ def register(request):
 def user_profile(request, user_id):
     user = get_object_or_404(User, id=user_id)
     posts = PostModel.objects.filter(user=user)
-    context = {'user': user, 'posts': posts}
-    return render(request, 'users/user_profile.html', context)
+    context = {
+        'user': user, 
+        'posts': posts
+    }
+    return render(request, 'blog/users/user_profile.html', context)
 
 @login_required
 def profile(request, username):

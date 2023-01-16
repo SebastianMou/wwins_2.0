@@ -101,12 +101,12 @@
                     <img src="{{ user.profilemodel.user_image.url }}" class="rounded-circle mr-3" width="50"
                         height="50">
                     <div class="d-flex flex-column">
-                        <h5 class="card-title mb-0">{{ request.user }}</h5>
-                        <span>@{{ request.user.first_name }}</span>
+                        <h5 class="card-title mb-0">@{{ request.user }}</h5>
                     </div>
                 </div>
                 <form method="POST">
                     {% csrf_token %}
+                    {{ form.category }}
                     {{form.media}}
                     {{ form.title }}
                     {{ form.content }}

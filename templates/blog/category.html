@@ -1,0 +1,14 @@
+{% extends './base.html' %}
+{% load static %}
+{% load humanize %}
+{% load crispy_forms_tags %}
+
+{% block contect %}
+<br><br><br>
+    <h1 style="color: white;">Category: {{ category }}</h1>
+    {% for post in posts %}
+    <a href="{% url 'post_detail' post.id %}">
+        <h2 style="color: white;">{{ post.title }}</h2>
+    </a>
+    {% endfor %}
+{% endblock %}

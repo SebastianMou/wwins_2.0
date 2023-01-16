@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
-from .models import PostModel, ProfileModel, CommentModel
+from .models import PostModel, ProfileModel, CommentModel, Category
 from ckeditor.fields import RichTextField
 from django.contrib.auth import get_user_model
 
@@ -33,14 +33,23 @@ class UserRegisterForm(UserCreationForm):
         fields = ['first_name', 'username', 'email', 'password1', 'password2']
 
 class PostForm(forms.ModelForm):
+    category = forms.ModelChoiceField(queryset=Category.objects.all(), widget=forms.Select(attrs={
+        'class': 'form-control', 
+    }))
     title = forms.CharField(widget=forms.TextInput(attrs={
         'class': 'form_register form-control bg-dark text-white', 
         'placeholder': 'Title',
     }))
     content = RichTextField()
+
     class Meta:
         model = PostModel
-        fields = ['title', 'content']
+        fields = ['category', 'title', 'content']
+
+class CategoryForm(forms.ModelForm):
+    class Meta:
+        model = Category
+        fields = '__all__'
 
 class UserUpdateForm(forms.ModelForm):
     username = forms.CharField(widget=forms.TextInput(attrs={

@@ -1,6 +1,7 @@
 {% extends './base.html' %}
 {% block title %}post detail{% endblock %}
 {% load static %}
+{% load humanize %}
 {% load crispy_forms_tags %}
 
 {% block contect %}
@@ -12,9 +13,9 @@
                     <img src="{{ post.user.profilemodel.user_image.url }}" class="rounded-circle mr-3" width="20"
                         height="20">
                     <div class="d-flex flex-column">
-                        <small style="color: white;">@{{ post.user }}</small>
-                        <small style="position: absolute; top: 0; right: 0; padding: 8px;">
-                            time now
+                        <small style="color: white;">@{{ post.user }} // {{ post.category }}</small>
+                        <small style="position: absolute; top: 0; right: 0; padding: 8px; color: white;">
+                            {{ post.date_stamp|naturaltime }}
                         </small>
                     </div>
                 </div>
@@ -91,9 +92,7 @@
                                 width="60" height="60" />
                             <div>
                                 <h6 class="fw-bold mb-1">{{ comment.user }}</h6>
-                                <div class="d-flex align-items-center mb-3">
-                                    <a href="#!" class="link-muted"><i class="fas fa-pencil-alt ms-2"></i></a>
-                                    <a href="#!" class="link-muted"><i class="fas fa-redo-alt ms-2"></i></a>
+                                <!-- <div class="d-flex align-items-center mb-3">
                                     <form action="{% url 'like_post' post.id %}" method="POST">
                                         {% csrf_token %}
                                         <a type="submit" name="post_id" value="{{ post.id }}">
@@ -102,7 +101,7 @@
                                             </svg>
                                         </a>
                                     </form>
-                                </div>
+                                </div> -->
                                 <p class="mb-0">{{ comment.content|safe }}</p>
                             </div>
                         </div>

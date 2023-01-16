@@ -1,0 +1,17 @@
+{% extends './base.html' %}
+{% load static %}
+{% load humanize %}
+{% load crispy_forms_tags %}
+
+{% block contect %}
+<br><br><br>
+<br><br><br>
+<br><br><br>
+<br><br><br>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <input type="submit" value="Save">
+</form>
+  
+{% endblock %}
