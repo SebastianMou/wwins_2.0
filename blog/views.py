@@ -51,6 +51,7 @@ def categories(request):
         'categories': Category.objects.all()
     }
 
+@login_required
 def create_category(request):
     if request.method == 'POST':
         form = CategoryForm(request.POST)

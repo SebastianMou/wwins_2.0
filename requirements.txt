@@ -5,6 +5,7 @@ django-crispy-forms==1.14.0
 django-jazzmin==2.6.0
 django-js-asset==2.0.0
 django-messages==0.6.0
+gunicorn==20.1.0
 Pillow==9.3.0
 pytz==2022.7
 six==1.16.0

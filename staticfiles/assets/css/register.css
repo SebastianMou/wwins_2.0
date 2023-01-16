@@ -1,0 +1,103 @@
+p {
+    color: white;
+}
+
+li {
+    color: white;
+}
+
+.box-register {
+    margin: auto;
+    position: relative;
+    width: 480px;
+    height: 620px;
+    background-color:  #13171f;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.box-register::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 480px;
+    height: 620px;
+    background: linear-gradient(0deg, transparent, #03dac5, #03dac5);
+    transform-origin: bottom right;
+    animation: animateS 6s linear infinite;
+}
+
+.box-register::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 480px;
+    height: 620px;
+    background: linear-gradient(0deg, transparent, #03dac5, #03dac5);
+    transform-origin: bottom right;
+    animation: animateS 6s linear infinite;
+    animation-delay: -3s;
+}
+
+@keyframes animateS {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.form-register {
+    position: absolute;
+    inset: 2px;
+    border-radius: 8px;
+    background: #13171f;
+    z-index: 10;
+    padding: 50px 40px;
+    display: flex;
+    flex-direction: column;
+}
+
+.bobthebuilder {
+    color: red;
+}
+
+.bubble {
+    position: relative;
+    display: flex;
+  }
+  
+  .bubble span {
+    position: relative;
+    width: 30px;
+    height: 30px;
+    background: #4fc3dc;
+    margin: 0 4px;
+    border-radius: 50%;
+    box-shadow: 0 0 0 10px #4fc3dc44,
+    0 0 50px #4fc3dc,
+    0 0 100px #4fc3dc;
+    animation: animate 15s linear infinite;
+    animation-duration: calc(185s / var(--i));
+  }
+  
+  .bubble span:nth-child(even) {
+    background: #ff2d75;
+    box-shadow: 0 0 0 10px #4fc3dc44,
+    0 0 50px #ff2d75,
+    0 0 100px #ff2d75;
+  }  
+  
+  
+  @keyframes animate {
+    0% {
+        transform: translateY(100vh) scale(0);
+    }
+    100% {
+        transform: translateY(-10vh) scale(1);
+    }
+  }
+  
