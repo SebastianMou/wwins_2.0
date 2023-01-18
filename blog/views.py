@@ -263,6 +263,6 @@ def delete(request, post_id=None):
     post.delete()
     return redirect('/')
 
-
-
+def community_guidelines(request):
+    return render(request, 'blog/community_guidelines.html')
 

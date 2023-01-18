@@ -90,3 +90,20 @@ class CommentForm(forms.ModelForm):
     class Meta:
         model = CommentModel
         fields = ['content']
+
+class CategoryForm(forms.ModelForm):
+    name = forms.CharField(widget=forms.TextInput(attrs={
+        'class': 'form_register form-control bg-dark text-white', 
+        'placeholder': 'name',
+    }))
+    discription = forms.CharField(widget=forms.Textarea(attrs={
+        'class': 'form_register form-control bg-dark text-white', 
+        'placeholder': 'discription',
+    }))
+    slug = forms.CharField(widget=forms.TextInput(attrs={
+        'class': 'form_register form-control bg-dark text-white', 
+        'placeholder': 'discription',
+    }))
+    class Meta:
+        model = Category
+        fields = ['name', 'discription', 'slug']

@@ -17,6 +17,7 @@ urlpatterns = [
      path('post_detail/<int:pk>', views.post_detail, name='post_detail'),
      path('post_edit/<int:pk>', views.post_edit, name='post_edit'),
      path('like_post/<int:pk>/', views.like_post, name='like_post'),
+     path('community_guidelines/', views.community_guidelines, name='community_guidelines'),
 
      path('activate/<uidb64>/<token>', views.activate, name='activate'),
 

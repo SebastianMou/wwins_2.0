@@ -26,7 +26,7 @@ class Category(models.Model):
 class ProfileModel(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     bio = models.CharField(default='Hi my name is ... my trying to improve, create, learn, build', max_length=355)
-    user_image = models.ImageField(default='default-avatar.png', upload_to='media', validators=[FileExtensionValidator(['png', 'jpg'])])
+    user_image = models.ImageField(upload_to='media', validators=[FileExtensionValidator(['png', 'jpg'])], default='default.png')
 
     def __str__(self) -> str:
         return f'profile of{self.user.username}'
