@@ -1,0 +1,26 @@
+{% extends './base.html' %}
+{% load static %}
+
+{% block contect %}
+<section id="hero-animated">
+    <div class="container">
+        <div class="card-body">
+            <h5>Submit a Complaint</h5>
+            <form id="form2" method="POST">
+                {% csrf_token %}
+                <div style="padding: 5px;" class="form-group">
+                    <input name="name" type="name" class="form_register form-control bg-dark text-white" id="name" placeholder="name">
+                </div>
+                <div style="padding: 5px;" class="form-group">
+                    <input name="email" type="email" class="form_register form-control bg-dark text-white" id="email" placeholder="Email">
+                </div>
+                <div style="padding: 5px;" class="form-group">
+                    <textarea name="message" class="form_register form-control bg-dark text-white"
+                        id="complaint" placeholder="Message" rows="10"></textarea>
+                </div>
+                <button style="padding: 9px;" type="submit" class="form-control btn btn-info">Submit</button>
+            </form>
+        </div>
+    </div>
+</section>
+{% endblock %}

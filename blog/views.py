@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from .models import PostModel, Category
+from .models import PostModel, ProfileModel, Category
 from django.contrib.auth.models import User
 from .forms import UserRegisterForm, PostForm, UserUpdateForm, ProfileUpdateForm, PostUpdateForm, CommentForm, CategoryForm
 from django.contrib.auth import authenticate, login, logout, get_user_model
@@ -23,23 +23,45 @@ from .tokens import account_activation_token
 def home_info(request):
     return render(request, 'blog/home_info.html')
 
-def home(request):
+def search_pc(request):
+    if request.method == 'POST':
+        searched = request.POST['searched']
+        posts = PostModel.objects.filter(title__contains=searched)
+        categories = Category.objects.filter(name__contains=searched)
+        users_prof = ProfileModel.objects.filter(user__username__icontains=searched)
+        context = {
+            'searched': searched,
+            'posts': posts,
+            'categories': categories,
+            'users_prof': users_prof,
+        }
+        return render(request, 'blog/search_pc.html', context)
+    else:
+        return render(request, 'blog/search_pc.html')
+
+def complaint(request):
     if request.method == 'POST':
         email = request.POST.get('email')
         message = request.POST.get('message')
+        name = request.POST.get('name')
         data = {
             'complaint': 'complaint form WWINS',
+            'name': name,
             'email': email,
             'message': message, 
         }
         message = '''
-        Form: {}
+        From: {}
+        Email: {}
 
         New message: {}
-        '''.format(data['email'], data['message'])
+        '''.format(data['name'], data['email'], data['message'])
         send_mail(data['complaint'], message, '', ['ensocio.mx@gmail.com'])
         return render(request, 'blog/email_sent.html')
 
+    return render(request, 'blog/complaint.html')    
+
+def home(request):
     posts = PostModel.objects.all()
     context = {
         'posts': posts,
