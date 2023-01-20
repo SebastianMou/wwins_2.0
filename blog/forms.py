@@ -102,7 +102,7 @@ class CategoryForm(forms.ModelForm):
     }))
     slug = forms.CharField(widget=forms.TextInput(attrs={
         'class': 'form_register form-control bg-dark text-white', 
-        'placeholder': 'discription',
+        'placeholder': 'link',
     }))
     class Meta:
         model = Category

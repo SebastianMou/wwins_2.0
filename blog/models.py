@@ -57,7 +57,11 @@ class PostModel(models.Model):
 class CommentModel(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     post = models.ForeignKey(PostModel, on_delete=models.CASCADE)
+    date_stamp = models.DateTimeField(auto_now_add=True, null=True)
     content = RichTextField()
+
+    class Meta:
+        ordering = ['-date_stamp']
 
     def __str__(self) -> str:
         return self.content
