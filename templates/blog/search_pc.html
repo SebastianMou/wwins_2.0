@@ -129,8 +129,8 @@
                 <div class="card d-flex justify-content-between" style="padding: 12px;">
                     <h3>Subreddit</h3>
                     {% for c in categories %}
-                        <a href="">
-                            <h5>r/<u>{{ c.name }}</u> (23)</h5>
+                        <a href="{{ c.get_absolute_url }}">
+                            <h5>r/<u>{{ c.name|title }}</u> (23)</h5>
                         </a>
                     {% endfor %}
                 </div>
@@ -141,7 +141,7 @@
                     <div style="padding: 5px;" class="d-flex">
                         <img src="{{ users.user.profilemodel.user_image.url }}" class="rounded-circle mr-3" width="20" height="20">
                         <div class="d-flex flex-column">
-                            <a href="">
+                            <a href="{% url 'user_profile' users.user_id %}">
                                 <small>@ {{ users.user }}</small>
                             </a>
                         </div>

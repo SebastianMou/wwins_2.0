@@ -25,6 +25,30 @@
     small {
         color: white;
     }
+    
+    .FollowButton {
+        background-color: #0c8ba1;
+        border-radius: 28px;
+        border: 1px solid #0c8ba1;
+        display: inline-block;
+        cursor: pointer;
+        color: #ffffff;
+        font-family: Arial;
+        font-size: 17px;
+        padding: 2px 41px;
+        text-decoration: none;
+        text-shadow: 0px 1px 0px #2f6627;
+    }
+
+    .FollowButton:hover {
+        background-color: #108ba1;
+    }
+
+    .FollowButton:active {
+        position: relative;
+        top: 1px;
+    }
+
 
     .myButton {
         background-color: #0c8ba1;
@@ -68,23 +92,35 @@
                 </div>
                 <div class="card-body text-center">
                     <a href="{% url 'profile' user.username %}"><h5 class="card-title">@{{ user.username }}</h5></a>
-                    <br>
+                    {% if request.user.is_authenticated %}
+                        {% if user != request.user %}
+                            {% if is_following %}
+                                <a href="{% url 'unfollow_user' user.id %}" class="btn btn-danger">Unfollow</a>
+                            {% else %}
+                                <a href="{% url 'follow_user' user.id %}" class="btn btn-primary">Follow</a>
+                            {% endif %}
+                        {% endif %}
+                    {% else %}
+                        <a href="{% url 'login' %}" class="btn btn-danger">login to follow</a>
+                    {% endif %}
+
+
                     <div class="twPc-divStats">
                         <div class="row">
-                            <a class="col" href="https://twitter.com/mertskaplan" title="9.840 Tweet">
-                                <span class="twPc-StatLabel twPc-block">Tweets</span>
+                            <a class="col" href="" title="9.840 Tweet">
+                                <span class="twPc-StatLabel twPc-block">Posts</span>
                                 <hr>
-                                <span class="twPc-StatValue">9.840</span>
+                                <span class="twPc-StatValue">---</span>
                             </a>
-                            <a class="col" href="https://twitter.com/mertskaplan/following" title="885 Following">
-                                <span class="twPc-StatLabel twPc-block">Following</span>
-                                <hr>
-                                <span class="twPc-StatValue">885</span>
-                            </a>
-                            <a class="col" href="https://twitter.com/mertskaplan/followers" title="1.810 Followers">
+                            <a class="col" href="" title="1.810 Followers">
                                 <span class="twPc-StatLabel twPc-block">Followers</span>
                                 <hr>
-                                <span class="twPc-StatValue">1.810</span>
+                                <span class="twPc-StatValue">{{ user.following.count }}</span>
+                            </a>
+                            <a class="col" href="" title="885 Following">
+                                <span class="twPc-StatLabel twPc-block">Following</span>
+                                <hr>
+                                <span class="twPc-StatValue">{{ user.follower.count }}</span>
                             </a>
                         </div>
                     </div>

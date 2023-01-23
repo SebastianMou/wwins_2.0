@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import PostModel, ProfileModel, CommentModel, Category
+from .models import PostModel, ProfileModel, CommentModel, Category, Follower
 # Register your models here.
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
@@ -15,3 +15,7 @@ class PostModelAdmin(admin.ModelAdmin):
     list_display = ['user','title', 'content', 'date_stamp']
 
 admin.site.register(CommentModel)
+
+@admin.register(Follower)
+class FollowerAdmin(admin.ModelAdmin):
+    list_display = ['follower','following', 'created_at']

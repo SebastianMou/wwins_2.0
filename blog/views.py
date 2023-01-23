@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from .models import PostModel, ProfileModel, Category
+from .models import PostModel, ProfileModel, Category, Follower
 from django.contrib.auth.models import User
 from .forms import UserRegisterForm, PostForm, UserUpdateForm, ProfileUpdateForm, PostUpdateForm, CommentForm, CategoryForm
 from django.contrib.auth import authenticate, login, logout, get_user_model
@@ -9,6 +9,7 @@ from django.shortcuts import get_object_or_404
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.core.mail import send_mail
+from django.core.paginator import Paginator
 
 from django.template.loader import render_to_string
 from django.contrib.sites.shortcuts import get_current_site
@@ -39,28 +40,6 @@ def search_pc(request):
     else:
         return render(request, 'blog/search_pc.html')
 
-def complaint(request):
-    if request.method == 'POST':
-        email = request.POST.get('email')
-        message = request.POST.get('message')
-        name = request.POST.get('name')
-        data = {
-            'complaint': 'complaint form WWINS',
-            'name': name,
-            'email': email,
-            'message': message, 
-        }
-        message = '''
-        From: {}
-        Email: {}
-
-        New message: {}
-        '''.format(data['name'], data['email'], data['message'])
-        send_mail(data['complaint'], message, '', ['ensocio.mx@gmail.com'])
-        return render(request, 'blog/email_sent.html')
-
-    return render(request, 'blog/complaint.html')    
-
 def home(request):
     posts = PostModel.objects.all()
     context = {
@@ -69,8 +48,9 @@ def home(request):
     return render(request, 'blog/home.html', context)
 
 def categories(request):
+    categories = Category.objects.all()[:10]
     return {
-        'categories': Category.objects.all()
+        'categories': categories,
     }
 
 @login_required
@@ -189,34 +169,40 @@ def register(request):
 
 def user_profile(request, user_id):
     user = get_object_or_404(User, id=user_id)
+
+    is_following = False
+    if request.user.is_authenticated:
+        is_following = request.user.follower.filter(following=user).exists()
+
     posts = PostModel.objects.filter(user=user)
     context = {
         'user': user, 
-        'posts': posts
+        'posts': posts,
+        'is_following': is_following,
     }
     return render(request, 'blog/users/user_profile.html', context)
 
 @login_required
 def profile(request, username):
-    # posts = request.user.PostModel.all()
     posts = PostModel.objects.all()
     posts = posts.filter(user=request.user)
 
     if request.method == 'POST':
         user = request.user
         u_form = UserUpdateForm(request.POST or None, instance=user)
-        # p_form = ProfileUpdateForm(request.POST or None, request.FILES or None, instance=request.user.profilemodel)
-        if u_form.is_valid():
+        p_form = ProfileUpdateForm(request.POST, request.FILES, instance=request.user.profilemodel)
+        if u_form.is_valid() and p_form.is_valid():
             user_form = u_form.save()
+            p_form.save()
             messages.success(request, f'{user_form.username}, Your profile has been updated!')
             return redirect('profile', user_form.username)
     else:
         u_form = UserUpdateForm(instance=request.user)
-        # p_form = ProfileUpdateForm(instance=request.user.profilemodel)
+        p_form = ProfileUpdateForm(instance=request.user.profilemodel)
 
     context = {
         'u_form': u_form,
-        # 'p_form': p_form,
+        'p_form': p_form,
         'posts': posts,
     }
 
@@ -226,6 +212,18 @@ def profile(request, username):
         return render(request, 'blog/profile.html', context)
 
     return render(request, 'blog/profile.html', context)
+
+def follow_user(request, user_id):
+    user_to_follow = get_object_or_404(User, id=user_id)
+    follow = Follower(follower=request.user, following=user_to_follow)
+    follow.save()
+    return redirect('user_profile', user_id=user_to_follow.id)
+
+def unfollow_user(request, user_id):
+    user_to_unfollow = get_object_or_404(User, id=user_id)
+    follow = get_object_or_404(Follower, follower=request.user, following=user_to_unfollow)
+    follow.delete()
+    return redirect('user_profile', user_id=user_to_unfollow.id)
 
 def like_post(request, pk):
     post = get_object_or_404(PostModel, id=pk)
@@ -288,3 +286,24 @@ def delete(request, post_id=None):
 def community_guidelines(request):
     return render(request, 'blog/community_guidelines.html')
 
+def complaint(request):
+    if request.method == 'POST':
+        email = request.POST.get('email')
+        message = request.POST.get('message')
+        name = request.POST.get('name')
+        data = {
+            'complaint': 'complaint form WWINS',
+            'name': name,
+            'email': email,
+            'message': message, 
+        }
+        message = '''
+        From: {}
+        Email: {}
+
+        New message: {}
+        '''.format(data['name'], data['email'], data['message'])
+        send_mail(data['complaint'], message, '', ['ensocio.mx@gmail.com'])
+        return render(request, 'blog/email_sent.html')
+
+    return render(request, 'blog/complaint.html')

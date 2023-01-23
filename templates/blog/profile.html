@@ -4,61 +4,6 @@
 {% load crispy_forms_tags %}
 
 {% block contect %}
-<!-- <div class="container">
-    <div class="row mt-5 pt-3">
-        <div class="col-md-6 offset-md-3">
-            <div style="background-color: blue;" class="cards-body">
-                <span style="color: white;" class="h4">Profile Page</span>
-                <span class="float-right">
-                  <button type="button" class="btn btn-info float-right btn-sm" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
-                      edit profile
-                  </button>
-                </span>
-                
-                <hr>
-                <div class="row">
-                    <div class="col-md-4">
-                        <img class="img-thumbnail" src="{{ user.profilemodel.user_image.url }}" alt="profile-img">
-                    </div>
-                    <div class="col-md-8">
-                        <h6>@: {{ user.first_name }} </h6>
-                        <h6>name: {{ user.username }} </h6>
-                        <h6>email: {{ user.email }} </h6>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-  
-  <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="staticBackdropLabel">edit profile information</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          <div class="row">
-            <div class="col-md-4">
-                <img class="img-thumbnail" src="{{ user.profilemodel.user_image.url }}" alt="">
-            </div>
-            <div class="col-md-8">
-                <form method="POST" enctype="multipart/form-data">
-                    {% csrf_token %}
-                    {{ u_form|crispy }}
-                    {{ p_form|crispy }}
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary btn-sm">save</button>
-                      </div>
-                </form>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div> -->
 <script src="{% static 'ckeditor/ckeditor-init.js' %}"></script>
 <script src="{% static 'ckeditor/ckeditor/ckeditor.js' %}"></script>
 <style>
@@ -140,20 +85,20 @@
                     <br>
                     <div class="twPc-divStats">
                         <div class="row">
-                            <a class="col" href="https://twitter.com/mertskaplan" title="9.840 Tweet">
-                                <span class="twPc-StatLabel twPc-block">Tweets</span>
+                            <a class="col" href="" title="9.840 Tweet">
+                                <span class="twPc-StatLabel twPc-block">Posts</span>
                                 <hr>
-                                <span class="twPc-StatValue">9.840</span>
+                                <span class="twPc-StatValue">---</span>
                             </a>
-                            <a class="col" href="https://twitter.com/mertskaplan/following" title="885 Following">
-                                <span class="twPc-StatLabel twPc-block">Following</span>
-                                <hr>
-                                <span class="twPc-StatValue">885</span>
-                            </a>
-                            <a class="col" href="https://twitter.com/mertskaplan/followers" title="1.810 Followers">
+                            <a class="col" href="" title="1.810 Followers">
                                 <span class="twPc-StatLabel twPc-block">Followers</span>
                                 <hr>
-                                <span class="twPc-StatValue">1.810</span>
+                                <span class="twPc-StatValue">{{ user.following.count }}</span>
+                            </a>
+                            <a class="col" href="" title="885 Following">
+                                <span class="twPc-StatLabel twPc-block">Following</span>
+                                <hr>
+                                <span class="twPc-StatValue">{{ user.follower.count }}</span>
                             </a>
                         </div>
                     </div>
@@ -260,21 +205,9 @@
             </div>
             <br>
             <div class="card">
-                <div class="card-body">
-                    <h5>Submit a Complaint</h5>
-                    <form method="POST">
-                        {% csrf_token %}
-                        <div style="padding: 5px;" class="form-group">
-                            <input name="email" type="email" class="form_register form-control bg-dark text-white"
-                                id="email" placeholder="Email">
-                        </div>
-                        <div style="padding: 5px;" class="form-group">
-                            <textarea name="message" class="form_register form-control bg-dark text-white"
-                                id="complaint" placeholder="Message" rows="3"></textarea>
-                        </div>
-                        <button style="padding: 9px;" type="submit" class="form-control btn btn-info">Submit</button>
-                    </form>
-                </div>
+                <a href="{% url 'complaint' %}">
+                    <button style="padding: 9px;" type="submit" class="form-control btn btn-info">Submit a Complaint</button>
+                </a>
             </div>
         </div>
     </div>

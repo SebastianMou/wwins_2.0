@@ -79,20 +79,20 @@
                     <br>
                     <div class="twPc-divStats">
                         <div class="row">
-                            <a class="col" href="https://twitter.com/mertskaplan" title="9.840 Tweet">
-                                <span class="twPc-StatLabel twPc-block">Tweets</span>
+                            <a class="col" href="" title="9.840 Tweet">
+                                <span class="twPc-StatLabel twPc-block">Posts</span>
                                 <hr>
-                                <span class="twPc-StatValue">9.840</span>
+                                <span class="twPc-StatValue">---</span>
                             </a>
-                            <a class="col" href="https://twitter.com/mertskaplan/following" title="885 Following">
-                                <span class="twPc-StatLabel twPc-block">Following</span>
-                                <hr>
-                                <span class="twPc-StatValue">885</span>
-                            </a>
-                            <a class="col" href="https://twitter.com/mertskaplan/followers" title="1.810 Followers">
+                            <a class="col" href="" title="1.810 Followers">
                                 <span class="twPc-StatLabel twPc-block">Followers</span>
                                 <hr>
-                                <span class="twPc-StatValue">1.810</span>
+                                <span class="twPc-StatValue">{{ user.following.count }}</span>
+                            </a>
+                            <a class="col" href="" title="885 Following">
+                                <span class="twPc-StatLabel twPc-block">Following</span>
+                                <hr>
+                                <span class="twPc-StatValue">{{ user.follower.count }}</span>
                             </a>
                         </div>
                     </div>
@@ -135,9 +135,9 @@
                 <div class="card-body">
                     <p>Subreddits</p>
                     {% for c in categories %}
-                    <a href="{{ c.get_absolute_url }}">
-                        <h5>{{ c.name|title }}</h5>
-                    </a>
+                        <a href="{{ c.get_absolute_url }}">
+                            <h5>{{ c.name|title }}</h5>
+                        </a>
                     {% endfor %}
                 </div>
             </div>
@@ -208,9 +208,9 @@
                 <div class="card-body">
                     <p>Subreddits</p>
                     {% for c in categories %}
-                    <a href="{{ c.get_absolute_url }}">
-                        <h5>{{ c.name|title }}</h5>
-                    </a>
+                        <a href="{{ c.get_absolute_url }}">
+                            <h5>{{ c.name|title }}</h5>
+                        </a>
                     {% endfor %}
                 </div>
             </div>
