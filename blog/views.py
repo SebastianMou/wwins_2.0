@@ -9,6 +9,7 @@ from django.shortcuts import get_object_or_404
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.core.mail import send_mail
+from django.db.models import Count
 
 from django.template.loader import render_to_string
 from django.contrib.sites.shortcuts import get_current_site
@@ -28,7 +29,8 @@ def search_pc(request):
         searched = request.POST['searched']
         posts = PostModel.objects.filter(title__contains=searched)
         categories = Category.objects.filter(name__contains=searched)
-        users_prof = ProfileModel.objects.filter(user__username__icontains=searched)
+        users_prof = ProfileModel.objects.filter(user__username__icontains=searched).annotate(post_count=Count('user__posts'))
+
         context = {
             'searched': searched,
             'posts': posts,
@@ -40,14 +42,24 @@ def search_pc(request):
         return render(request, 'blog/search_pc.html')
 
 def home(request):
+    if request.user.is_authenticated:
+        current_user = request.user
+        user_post_count = PostModel.objects.filter(user=current_user).count()
+    else:
+        user_post_count = None
+        posts = PostModel.objects.all()
+
+
     posts = PostModel.objects.all()
     context = {
         'posts': posts,
+        'user_post_count': user_post_count,
     }
     return render(request, 'blog/home.html', context)
 
 def categories(request):
     categories = Category.objects.all()[:10]
+
     return {
         'categories': categories,
     }
@@ -168,6 +180,7 @@ def register(request):
 
 def user_profile(request, user_id):
     user = get_object_or_404(User, id=user_id)
+    user_post_count = PostModel.objects.filter(user=user).count()
 
     is_following = False
     if request.user.is_authenticated:
@@ -178,6 +191,7 @@ def user_profile(request, user_id):
         'user': user, 
         'posts': posts,
         'is_following': is_following,
+        'user_post_count': user_post_count,
     }
     return render(request, 'blog/users/user_profile.html', context)
 
@@ -185,6 +199,9 @@ def user_profile(request, user_id):
 def profile(request, username):
     posts = PostModel.objects.all()
     posts = posts.filter(user=request.user)
+
+    user = request.user
+    user_post_count = PostModel.objects.filter(user=user).count()
 
     if request.method == 'POST':
         user = request.user
@@ -203,6 +220,7 @@ def profile(request, username):
         'u_form': u_form,
         'p_form': p_form,
         'posts': posts,
+        'user_post_count': user_post_count,
     }
 
     user = get_user_model().objects.filter(username=username).first()

@@ -130,7 +130,7 @@
                     <h3>Subreddit</h3>
                     {% for c in categories %}
                         <a href="{{ c.get_absolute_url }}">
-                            <h5>r/<u>{{ c.name|title }}</u> (23)</h5>
+                            <h5>r/<u>{{ c.name|title }}</u></h5>
                         </a>
                     {% endfor %}
                 </div>
@@ -138,14 +138,14 @@
                 <div style="padding: 12px;" class="card">
                     <h3>Users</h3>
                     {% for users in users_prof %}
-                    <div style="padding: 5px;" class="d-flex">
-                        <img src="{{ users.user.profilemodel.user_image.url }}" class="rounded-circle mr-3" width="20" height="20">
-                        <div class="d-flex flex-column">
-                            <a href="{% url 'user_profile' users.user_id %}">
-                                <small>@ {{ users.user }}</small>
-                            </a>
-                        </div>
-                    </div>
+                            <div style="padding: 5px;" class="d-flex">
+                                <img src="{{ users.user.profilemodel.user_image.url }}" class="rounded-circle mr-3" width="20" height="20">
+                                <div class="d-flex flex-column">
+                                    <a href="{% url 'user_profile' users.user_id %}">
+                                        <small>@ {{ users.user }} // Posts: <b>({{ users.post_count }})</b></small>
+                                    </a>
+                                </div>
+                            </div>
                     {% endfor %}
                 </div>
             </div>
