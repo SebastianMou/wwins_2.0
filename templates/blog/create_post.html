@@ -107,7 +107,7 @@
                 <form method="POST">
                     {% csrf_token %}
                     {{ form.category }}
-                    {{form.media}}
+                    {{ form.media }}
                     {{ form.title }}
                     {{ form.content }}
                     <div class="card-footer d-flex align-items-center">

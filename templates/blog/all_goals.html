@@ -1,0 +1,65 @@
+{% extends './base.html' %}
+{% load static %}
+{% load humanize %}
+{% load crispy_forms_tags %}
+
+{% block contect %}
+<style>
+    .center-content {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    @media only screen and (max-width: 360px) {
+        .center-content {
+            margin: auto;
+            padding-top: 12px;
+            align-items: center;
+        }
+    }
+</style>
+<section id="hero-animated">
+    <h1 text-align="center">Goals</h1>
+    <div class="row">
+        {% for x in goals %}
+            <div class="col-12 col-md-6">
+                <br>
+                <div style="background-color: #13171f;" class="card">
+                    <div class="row g-0">
+                      <div style="width: 130px;" class="col-md-4 center-content">
+                        <img src="{{ x.user.profilemodel.user_image.url  }}" class="rounded-circle mr-3" width="70" height="70">
+                      </div>
+                      <div class="col-md-8">
+                        <div class="card-body">
+                            <div class="d-flex">
+                                <a href="{% url 'user_profile' x.user_id  %}">
+                                    <h5 style="color: white;" class="card-title">{{ x.user }}</h5>
+                                </a>
+                                {% if x.complete %}
+                                    <svg style="color: rgb(3, 148, 3); margin-left: 5px;" xmlns="http://www.w3.org/2000/svg" width="17" height="17" fill="currentColor" class="bi bi-check2-circle"
+                                        viewBox="0 0 16 16">
+                                        <path
+                                            d="M2.5 8a5.5 5.5 0 0 1 8.25-4.764.5.5 0 0 0 .5-.866A6.5 6.5 0 1 0 14.5 8a.5.5 0 0 0-1 0 5.5 5.5 0 1 1-11 0z" />
+                                        <path
+                                            d="M15.354 3.354a.5.5 0 0 0-.708-.708L8 9.293 5.354 6.646a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0l7-7z" />
+                                    </svg>
+                                    {% else %}
+                                    <svg style="color: white; margin-left: 5px;" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-circle"
+                                        viewBox="0 0 16 16">
+                                        <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
+                                    </svg>
+                                {% endif %}
+                            </div>
+                            <a href="{% url 'goal_detail' x.id  %}">
+                                <p style="color: white;" class="card-text">{{ x.goal }}</p>
+                            </a>
+                            <p style="color: gray;" class="card-text"><small class="text-muted">{{ x.created|naturaltime }}</small></p>
+                        </div>
+                      </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor  %}
+    </div>
+</section>
+{% endblock %}

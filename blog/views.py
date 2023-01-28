@@ -1,7 +1,8 @@
 from django.shortcuts import render, redirect
-from .models import PostModel, ProfileModel, Category, Follower
+from .models import PostModel, ProfileModel, GoalsModel, Category, Follower
 from django.contrib.auth.models import User
-from .forms import UserRegisterForm, PostForm, UserUpdateForm, ProfileUpdateForm, PostUpdateForm, CommentForm, CategoryForm
+from .forms import (UserRegisterForm, PostForm, UserUpdateForm, 
+ProfileUpdateForm, GoalsForm, GoalUpdateForm, PostUpdateForm, CommentForm, CategoryForm)
 from django.contrib.auth import authenticate, login, logout, get_user_model
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
@@ -10,6 +11,7 @@ from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.core.mail import send_mail
 from django.db.models import Count
+from django.urls import reverse_lazy
 
 from django.template.loader import render_to_string
 from django.contrib.sites.shortcuts import get_current_site
@@ -30,12 +32,14 @@ def search_pc(request):
         posts = PostModel.objects.filter(title__contains=searched)
         categories = Category.objects.filter(name__contains=searched)
         users_prof = ProfileModel.objects.filter(user__username__icontains=searched).annotate(post_count=Count('user__posts'))
+        goals = GoalsModel.objects.filter(goal__icontains=searched)
 
         context = {
             'searched': searched,
             'posts': posts,
             'categories': categories,
             'users_prof': users_prof,
+            'goals': goals,
         }
         return render(request, 'blog/search_pc.html', context)
     else:
@@ -48,7 +52,6 @@ def home(request):
     else:
         user_post_count = None
         posts = PostModel.objects.all()
-
 
     posts = PostModel.objects.all()
     context = {
@@ -69,8 +72,8 @@ def create_category(request):
     if request.method == 'POST':
         form = CategoryForm(request.POST)
         if form.is_valid():
-            form.save()
-            return redirect('create_category')
+            category = form.save()
+            return redirect(category)
     else:
         form = CategoryForm()
     return render(request, 'blog/create_category.html', {'form': form})
@@ -105,7 +108,6 @@ def logout_user(request):
 
 @login_required
 def create_post(request):
-    posts = PostModel.objects.all()
     if request.method == 'POST':
         form = PostForm(request.POST)
         if form.is_valid():
@@ -117,11 +119,10 @@ def create_post(request):
             post.category = category
             post.user = request.user
             post.save()
-            return redirect('home')
+            return redirect('post_detail', pk=post.pk)
     else:
         form = PostForm()
     context = {
-        'posts': posts,
         'form': form,
     }
     return render(request, 'blog/create_post.html', context)
@@ -156,15 +157,14 @@ def activateEmail(request, user, to_email):
     })
     email = EmailMessage(mail_subject, message, to=[to_email])
     if email.send():
-        messages.success(request, f'Dear <b>{user}</b>, please go to you email <b>{to_email}</b> inbox and click on \
-            received activation link to confirm and complete the registration. <b>Note:</b> Check your spam folder.')
+        messages.success(request, f'Dear {user}, please go to you email {to_email} inbox and click on \
+            received activation link to confirm and complete the registration. Note: Check your spam folder.')
     else:
         messages.error(request, f'Problem sending confirmation email to {to_email}, check if you typed it correctly.')
 
 def register(request):
     if request.method == 'POST':
         form = UserRegisterForm(request.POST)
-
         if form.is_valid():
             user = form.save(commit=False)
             user.is_active = False
@@ -182,6 +182,9 @@ def user_profile(request, user_id):
     user = get_object_or_404(User, id=user_id)
     user_post_count = PostModel.objects.filter(user=user).count()
 
+    goals = GoalsModel.objects.filter(user=user)
+    count = goals.filter(complete=False).count()
+
     is_following = False
     if request.user.is_authenticated:
         is_following = request.user.follower.filter(following=user).exists()
@@ -192,8 +195,62 @@ def user_profile(request, user_id):
         'posts': posts,
         'is_following': is_following,
         'user_post_count': user_post_count,
+        'goals': goals,
+        'count': count,
     }
     return render(request, 'blog/users/user_profile.html', context)
+
+def all_goals(request):
+    goals = GoalsModel.objects.all()
+    context = {
+        'goals': goals,
+    }
+    return render(request, 'blog/all_goals.html', context)
+
+def create_a_goal(request):
+    if request.method == 'POST':
+        form_goal = GoalsForm(request.POST)
+        if form_goal.is_valid():
+            goal = form_goal.save(commit=False)
+            goal.user = request.user
+            goal.save()
+            return redirect(reverse_lazy('home'))
+    else:
+        form_goal = GoalsForm()
+    context = {
+        'form_goal': form_goal,
+    }
+ 
+    return render(request, 'blog/create_user_goals.html', context)
+
+def goal_detail(request, pk):
+    goal = GoalsModel.objects.get(id=pk)
+    context = {
+        'goal': goal,
+    }
+    return render(request, 'blog/goal_detail.html', context)
+
+@login_required
+def goal_delete(request, goal_id=None):
+    goals_post = GoalsModel.objects.get(id=goal_id)
+    goals_post.delete()
+    return redirect('/')
+
+@login_required
+def goal_edit(request, pk):
+    post = GoalsModel.objects.get(id=pk)
+    if request.method == 'POST':
+        form = GoalUpdateForm(request.POST, instance=post)
+        if form.is_valid():
+            form.save()
+            return redirect('goal_detail', pk=post.id)
+    else:
+        form = GoalUpdateForm(instance=post)
+    context = {
+        'post': post,
+        'form': form,
+    }
+    return render(request, 'blog/goal_edit.html', context)
 
 @login_required
 def profile(request, username):
@@ -202,6 +259,9 @@ def profile(request, username):
 
     user = request.user
     user_post_count = PostModel.objects.filter(user=user).count()
+
+    goals = GoalsModel.objects.filter(user=request.user)
+    count = goals.filter(complete=False).count()
 
     if request.method == 'POST':
         user = request.user
@@ -221,6 +281,8 @@ def profile(request, username):
         'p_form': p_form,
         'posts': posts,
         'user_post_count': user_post_count,
+        'goals': goals,
+        'count': count,
     }
 
     user = get_user_model().objects.filter(username=username).first()

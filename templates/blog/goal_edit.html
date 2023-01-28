@@ -1,0 +1,26 @@
+{% extends './base.html' %}
+{% load static %}
+{% load humanize %}
+
+{% block contect %}
+<script src="{% static 'ckeditor/ckeditor-init.js' %}"></script>
+<script src="{% static 'ckeditor/ckeditor/ckeditor.js' %}"></script>
+<section id="hero-animated">
+    <div style="width: 60%;" class="container">
+        <h1 style="color: white;">create a goal</h1>
+        <form method="POST">
+            {% csrf_token %}
+            {{ form.goal }}
+            {{ form.content }}
+            <div class="row">
+                <div class="col">
+                    {{ form.Timeline_objective }}
+                </div>
+                <div class="col">
+                    {{ form.complete }}
+                </div>
+            </div>
+            <input type="submit" value="post" class="btn btn-primary btn-lg form-control"></input>
+        </form>
+    </div>
+</section>{% endblock %}

@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
-from .models import PostModel, ProfileModel, CommentModel, Category
+from .models import PostModel, ProfileModel, GoalsModel, CommentModel, Category
 from ckeditor.fields import RichTextField
 from django.contrib.auth import get_user_model
 
@@ -50,6 +50,64 @@ class CategoryForm(forms.ModelForm):
     class Meta:
         model = Category
         fields = '__all__'
+
+class GoalsForm(forms.ModelForm):
+    goal = forms.CharField(widget=forms.TextInput(attrs={
+        'class': 'form_register form-control bg-dark text-white', 
+        'placeholder': 'Title',
+    }))
+    content = RichTextField()
+    STATUS_CHOICES = (
+        ('2023', '2023'),
+        ('2024', '2024'),
+        ('2025', '2025'),
+        ('2026', '2026'),
+        ('2027', '2027'),
+        ('2028', '2028'),
+        ('2029', '2029'),
+        ('2030', '2030'),
+        ('2031', '2031'),
+        ('2032', '2032'),
+        ('2033', '2033'),
+        ('2034', '2034'),
+        ('2035', '2035'),
+    )
+    Timeline_objective = forms.ChoiceField(choices=STATUS_CHOICES, widget=forms.Select(attrs={
+        'class': 'form-control', 
+    }))
+    complete = forms.BooleanField(required=False)
+    class Meta:
+        model = GoalsModel
+        fields = ['goal', 'content', 'Timeline_objective', 'complete']
+
+class GoalUpdateForm(forms.ModelForm):
+    goal = forms.CharField(widget=forms.TextInput(attrs={
+        'class': 'form_register form-control bg-dark text-white', 
+        'placeholder': 'Title',
+    }))
+    content = RichTextField()
+    STATUS_CHOICES = (
+        ('2023', '2023'),
+        ('2024', '2024'),
+        ('2025', '2025'),
+        ('2026', '2026'),
+        ('2027', '2027'),
+        ('2028', '2028'),
+        ('2029', '2029'),
+        ('2030', '2030'),
+        ('2031', '2031'),
+        ('2032', '2032'),
+        ('2033', '2033'),
+        ('2034', '2034'),
+        ('2035', '2035'),
+    )
+    Timeline_objective = forms.ChoiceField(choices=STATUS_CHOICES, widget=forms.Select(attrs={
+        'class': 'form-control', 
+    }))
+    complete = forms.BooleanField(required=False)
+    class Meta:
+        model = GoalsModel
+        fields = fields = ['goal', 'content', 'Timeline_objective', 'complete']
 
 class UserUpdateForm(forms.ModelForm):
     username = forms.CharField(widget=forms.TextInput(attrs={

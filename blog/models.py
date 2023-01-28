@@ -54,6 +54,32 @@ class PostModel(models.Model):
     def __str__(self) -> str:
         return self.content
 
+class GoalsModel(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
+    goal = models.CharField(max_length=100, null=True)
+    content = RichTextField()
+    STATUS_CHOICES = (
+        ('2023', '2023'),
+        ('2024', '2024'),
+        ('2025', '2025'),
+        ('2026', '2026'),
+        ('2027', '2027'),
+        ('2028', '2028'),
+        ('2029', '2029'),
+        ('2030', '2030'),
+        ('2031', '2031'),
+        ('2032', '2032'),
+        ('2033', '2033'),
+        ('2034', '2034'),
+        ('2035', '2035'),
+    )
+    Timeline_objective = models.CharField(max_length=20, choices=STATUS_CHOICES, default='2023')
+    complete = models.BooleanField(default=False)
+    created = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.goal
+
 class CommentModel(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     post = models.ForeignKey(PostModel, on_delete=models.CASCADE)

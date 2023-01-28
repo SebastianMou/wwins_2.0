@@ -60,12 +60,14 @@
                             </svg> {{ total_likes }}
                         </a>
                     {% endif %}
+
                     <div style="position: absolute; bottom: 0; right: 0; padding: 8px;">
                         {% if request.user == post.user %}
                         <span><a class="btn btn-primary btn-sm" href="{% url 'post_edit' post.id %}">edit</a></span>
                         <span><a class="btn btn-danger btn-sm" href="{% url 'delete' post.id %}">delete</a></span>
                         {% endif %}
                     </div>
+                    
                 </div>
             </div>
             <div style="background-color: #13171f;" class="card mb-3">
