@@ -80,18 +80,6 @@
     .form_register:hover {
         border: 1px solid #03dac5;
     }
-    .center-content {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-    @media only screen and (max-width: 360px) {
-        .center-content {
-            margin: auto;
-            padding-top: 12px;
-            align-items: center;
-        }
-    }
 </style>
 <section id="hero-animated">
     <div class="row">
@@ -174,7 +162,7 @@
                         {% for x in goals %}
                         <tr>
                             <th scope="row">#</th>
-                            <td><a href="{% url 'goal_detail' x.id  %}"><small>{{ x.goal }}</small></a></td>
+                            <td><a href="{% url 'goal_detail' x.id  %}"><small data-bs-toggle="tooltip" data-bs-placement="bottom" title="{{ x.goal }}">{{ x.goal|slice:":15" }}</small></a></td>
                             <td><small>{{ x.created|naturaltime }}</small></td>
                             <td><small>{{ x.Timeline_objective }}</small>
                                 {% if x.complete %}
@@ -283,5 +271,9 @@
         config.language = 'fr';
         config.uiColor = 'black';
     };
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl)
+    })
 </script>
 {% endblock %}

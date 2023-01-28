@@ -90,7 +90,7 @@
                 {% if searched %}
                 <h3 style="color: white;">Searched: {{ searched }}</h3>
                 <div class="row">
-                    <div class="col-6 col-md-8 col-md-3">
+                    <div class="col-md-8 col-md-3">
                         {% for post in posts %}
                         <div class="card">
                             <div class="card-header d-flex align-items-center">
@@ -146,7 +146,7 @@
                         <br>
                         {% endfor %}
                     </div>
-                    <div class="col col-lg-4 col-md-3">
+                    <div class="col-lg-4 col-md-3">
                         <div class="card d-flex justify-content-between" style="padding: 12px;">
                             <h3>Subreddit</h3>
                             {% for c in categories %}
@@ -180,6 +180,7 @@
             </div>
             <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
                 {% if searched %}
+                <br>
                 <h3 style="color: white;">Searched: {{ searched }}</h3>
                 <div class="row">
                     {% for x in goals %}

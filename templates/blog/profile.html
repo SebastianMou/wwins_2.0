@@ -145,7 +145,7 @@
                         {% for x in goals %}
                         <tr>
                             <th scope="row">#</th>
-                            <td><a href="{% url 'goal_detail' x.id  %}"><small>{{ x.goal }}</small></a></td>
+                            <td><a href="{% url 'goal_detail' x.id  %}"><small data-bs-toggle="tooltip" data-bs-placement="bottom" title="{{ x.goal }}">{{ x.goal|slice:":12" }}</small></a></td>
                             <td><small>{{ x.created|naturaltime }}</small></td>
                             <td><small>{{ x.Timeline_objective }}</small>
                                 {% if x.complete %}
@@ -306,5 +306,10 @@
         config.language = 'fr';
         config.uiColor = 'black';
     };
+
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl)
+    })
 </script>
 {% endblock %}
