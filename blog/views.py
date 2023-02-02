@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from .models import PostModel, ProfileModel, GoalsModel, Category, Follower
+from .models import PostModel, ProfileModel, GoalsModel, Category, Follower, CategoryFollower
 from django.contrib.auth.models import User
 from .forms import (UserRegisterForm, PostForm, UserUpdateForm, 
 ProfileUpdateForm, GoalsForm, GoalUpdateForm, PostUpdateForm, CommentForm, CategoryForm)
@@ -46,47 +46,93 @@ def search_pc(request):
         return render(request, 'blog/search_pc.html')
 
 def home(request):
+    categories = Category.objects.all()[:10]
+
+    current_user = request.user
     if request.user.is_authenticated:
-        current_user = request.user
         user_post_count = PostModel.objects.filter(user=current_user).count()
+        categories_following = CategoryFollower.objects.filter(user=current_user)
+        categories_following_count = categories_following.count()
+        followers = Follower.objects.filter(follower=current_user)
+        following = [f.following for f in followers]
     else:
+        followers = None
+        following = None
+        categories_following = None
         user_post_count = None
+        categories_following_count = None
         posts = PostModel.objects.all()
 
     posts = PostModel.objects.all()
     context = {
         'posts': posts,
         'user_post_count': user_post_count,
+        'categories': categories,
+        'categories_following': categories_following,
+        'following': following, 
+        'categories_following_count': categories_following_count,       
     }
     return render(request, 'blog/home.html', context)
-
-def categories(request):
-    categories = Category.objects.all()[:10]
-
-    return {
-        'categories': categories,
-    }
 
 @login_required
 def create_category(request):
     if request.method == 'POST':
         form = CategoryForm(request.POST)
         if form.is_valid():
-            category = form.save()
-            return redirect(category)
+            category = form.save(commit=False)
+            category.user = request.user
+            category.save()
+            return redirect('category_list', pk=category.pk)
     else:
         form = CategoryForm()
     return render(request, 'blog/create_category.html', {'form': form})
 
+def category_list(request, pk):
+    categories = Category.objects.all()[:10]
 
-def category_list(request, category_slug):
-    category = get_object_or_404(Category, slug=category_slug)
+    category = get_object_or_404(Category, pk=pk)
     posts = PostModel.objects.filter(category=category)
+
+    if request.user.is_authenticated:
+        user_is_following_category = CategoryFollower.objects.filter(
+            category=category,
+            user=request.user
+        ).exists()
+    else:
+        user_is_following_category = False
+
+    if request.method == "POST":
+        form = CategoryForm(request.POST, instance=category)
+        if form.is_valid():
+            category = form.save(commit=False)
+            category.save()
+            return redirect('category_list', pk=category.pk)
+    else:
+        form = CategoryForm(instance=category)
+
     context = {
         'category': category,
         'posts': posts,
+        'categories': categories,
+        'form': form,
+        'user_is_following_category': user_is_following_category,
     }
     return render(request, 'blog/category.html', context)
+
+def edit_category(request, pk):
+    category = get_object_or_404(Category, pk=pk)
+    if request.method == "POST":
+        form = CategoryForm(request.POST, instance=category)
+        if form.is_valid():
+            category = form.save(commit=False)
+            category.save()
+            return redirect('category_list', pk=category.pk)
+    else:
+        form = CategoryForm(instance=category)
+    context = {
+        'form': form,
+    }
+    return render(request, 'blog/edit_category.html', context)
 
 def login_user(request):
     if request.method == 'POST':
@@ -239,6 +285,10 @@ def goal_delete(request, goal_id=None):
 @login_required
 def goal_edit(request, pk):
     post = GoalsModel.objects.get(id=pk)
+
+    if post.user != request.user:
+        return redirect('home')
+
     if request.method == 'POST':
         form = GoalUpdateForm(request.POST, instance=post)
         if form.is_valid():
@@ -304,6 +354,30 @@ def unfollow_user(request, user_id):
     follow.delete()
     return redirect('user_profile', user_id=user_to_unfollow.id)
 
+def follow_category(request, pk):
+    category = get_object_or_404(Category, pk=pk)
+    CategoryFollower.objects.create(category=category, user=request.user)
+    return redirect('category_list', pk=pk)
+
+def unfollow_category(request, pk):
+    category = get_object_or_404(Category, pk=pk)
+    CategoryFollower.objects.filter(
+        category=category,
+        user=request.user
+    ).delete()
+    return redirect('category_list', pk=pk)
+
+def following_users(request):
+    user = request.user
+    category_followers = CategoryFollower.objects.filter(user=user)
+    # following_categories = [follower.category for follower in category_followers]
+    # following_users = User.objects.filter(categoryfollower__category__in=following_categories).distinct()
+    context = {
+        # 'following_users': following_users,
+        'category_followers': category_followers,
+    }
+    return render(request, 'blog/following_users.html', context)
+
 def like_post(request, pk):
     post = get_object_or_404(PostModel, id=pk)
     if post.likes.filter(id=request.user.id).exists():
@@ -343,6 +417,9 @@ def post_detail(request, pk):
 @login_required
 def post_edit(request, pk):
     post = PostModel.objects.get(id=pk)
+    if post.user != request.user:
+        return redirect('home')
+
     if request.method == 'POST':
         form = PostUpdateForm(request.POST, instance=post)
         if form.is_valid():

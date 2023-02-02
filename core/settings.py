@@ -157,7 +157,6 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-                'blog.views.categories',
             ],
         },
     },
@@ -228,13 +227,12 @@ STATICFILES_DIRS = [
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-EMAIL_BACKEND = ''
-EMAIL_HOST = ''
-EMAIL_HOST_USER = ''
-EMAIL_HOST_PASSWORD = ''
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = 'ensocio.mx@gmail.com'
+EMAIL_HOST_PASSWORD = 'qtgtupjwhcfiomsl'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-
 
 PASSWORD_RESET_TIMEOUT = 14400
 

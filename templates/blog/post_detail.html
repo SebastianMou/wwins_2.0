@@ -12,8 +12,13 @@
                 <div class="card-header d-flex align-items-center">
                     <img src="{{ post.user.profilemodel.user_image.url }}" class="rounded-circle mr-3" width="20"
                         height="20">
-                    <div class="d-flex flex-column">
-                        <small style="color: white;">@{{ post.user }} // {{ post.category }}</small>
+                    <div class="d-flex">
+                        <a href="{% url 'user_profile' post.user.id %}">
+                            <small style="color: white;">@{{ post.user }} //</small>
+                        </a>
+                        <a style="padding-left: 4px;" href="{% url 'category_list' post.category.pk%}">
+                            <small style="color: white;">{{ post.category }}</small>
+                        </a>
                         <small style="position: absolute; top: 0; right: 0; padding: 8px; color: white;">
                             {{ post.date_stamp|naturaltime }}
                         </small>

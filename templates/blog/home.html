@@ -79,21 +79,80 @@
                     <br>
                     <div class="twPc-divStats">
                         <div class="row">
-                            <a class="col" href="" title="9.840 Tweet">
+                            <a class="col" href="{% url 'profile' user.username %}" title="9.840 Tweet">
                                 <span class="twPc-StatLabel twPc-block">Posts</span>
                                 <hr>
                                 <span class="twPc-StatValue">{{ user_post_count }}</span>
                             </a>
-                            <a class="col" href="" title="1.810 Followers">
+                            <a class="col" data-bs-toggle="modal" data-bs-target="#exampleModalsecond" href="">
                                 <span class="twPc-StatLabel twPc-block">Followers</span>
                                 <hr>
                                 <span class="twPc-StatValue">{{ user.following.count }}</span>
                             </a>
-                            <a class="col" href="" title="885 Following">
+                            <a type="button" data-bs-toggle="modal" data-bs-target="#exampleModal" class="col" href="">
                                 <span class="twPc-StatLabel twPc-block">Following</span>
                                 <hr>
-                                <span class="twPc-StatValue">{{ user.follower.count }}</span>
+                                <span class="twPc-StatValue">{{ categories_following_count }} | {{ user.follower.count }}</span>
                             </a>
+                            <!-- Modal -->
+                            <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                <div class="modal-dialog modal-lg">
+                                    <div style="background-color: #13171f;" class="modal-content">
+                                        <div class="modal-header">
+                                        <h5 class="modal-title" id="exampleModalLabel">Following</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <div class="row">
+                                                {% if request.user.is_authenticated %}
+                                                    <div class="col">
+                                                        <h4>Societies <small>({{ categories_following_count }})</small></h4>
+                                                        <hr style="color: white;">
+                                                        {% for categories_follower in categories_following %}
+                                                            <a href="">
+                                                                <p>{{ categories_follower.category }}</p>
+                                                            </a>
+                                                        {% endfor %}
+                                                    </div>
+                                                    <div class="col">
+                                                        <h4>Members <small>({{ user.follower.count }})</small></h4>
+                                                        <hr style="color: white;">
+                                                        {% for user in request.user.follower.all %}
+                                                        <a href="">
+                                                            <p>{{ user.following }}</p>
+                                                        </a>
+                                                        {% endfor %}
+                                                    </div>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Modal -->
+                            <div class="modal fade" id="exampleModalsecond" tabindex="-1" aria-labelledby="exampleModalsecond" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div style="background-color: #13171f;" class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="exampleModalsecond">Followers ({{ user.following.count }})</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            {% if request.user.is_authenticated %}
+                                                {% for follow in following %}
+                                                    <p>{{ follow.username }}</p>
+                                                {% endfor %}
+                                            {% endif %}
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <hr style="color: white;">
@@ -135,7 +194,7 @@
                 <div class="card-body">
                     <p>Subreddits</p>
                     {% for c in categories %}
-                        <a href="{{ c.get_absolute_url }}">
+                        <a href="{% url 'category_list' c.pk %}">
                             <h5>{{ c.name|title }}</h5>
                         </a>
                     {% endfor %}
@@ -154,7 +213,7 @@
                     <br>
                     <div class="twPc-divStats">
                         <div class="row">
-                            <a id="blur" class="col" href="https://twitter.com/mertskaplan" title="9.840 Tweet">
+                            <a id="blur" class="col" href="" title="9.840 Tweet">
                                 <span class="twPc-StatLabel twPc-block">Tweets</span>
                                 <hr>
                                 <span class="twPc-StatValue">9999</span>
@@ -162,7 +221,7 @@
                             <a class="col" href="{% url 'login' %}" title="885 Following">
                                 <button type="button" class="btn btn-info">Login</button>
                             </a>
-                            <a id="blur" class="col" href="https://twitter.com/mertskaplan/followers" title="1.810 Followers">
+                            <a id="blur" class="col" href="" title="1.810 Followers">
                                 <span class="twPc-StatLabel twPc-block">Followers</span>
                                 <hr>
                                 <span class="twPc-StatValue">9999</span>
@@ -208,7 +267,7 @@
                 <div class="card-body">
                     <p>Subreddits</p>
                     {% for c in categories %}
-                        <a href="{{ c.get_absolute_url }}">
+                        <a href="{% url 'category_list' c.pk %}">
                             <h5>{{ c.name|title }}</h5>
                         </a>
                     {% endfor %}
@@ -231,9 +290,12 @@
             <div class="card mb-3">
                 <div class="card-header d-flex align-items-center">
                     <img src="{{ post.user.profilemodel.user_image.url }}" class="rounded-circle mr-3" width="20" height="20">
-                    <div class="d-flex flex-column">
+                    <div class="d-flex">
                         <a href="{% url 'user_profile' post.user_id %}">
-                            <small>@{{ post.user }} // {{ post.category }}</small>
+                            <small>@{{ post.user }} //</small>
+                        </a>
+                        <a style="padding-left: 4px;" href="{% url 'category_list' post.category.pk %}">
+                            <small>{{ post.category }}</small>
                         </a>
                         <small style="position: absolute; top: 0; right: 0; padding: 8px;">
                             {{ post.date_stamp|naturaltime }}

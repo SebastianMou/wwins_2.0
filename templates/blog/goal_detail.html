@@ -10,7 +10,7 @@
                 <img src="{{ post.user.profilemodel.user_image.url }}" class="rounded-circle mr-3" width="20"
                     height="20">
                 <div class="d-flex flex-column">
-                    <a href="">
+                    <a href="{% url 'user_profile' goal.user.id %}">
                         <small>@{{ goal.user }}</small>
                     </a>
                     <small style="position: absolute; top: 0; right: 0; padding: 8px; color: white;">

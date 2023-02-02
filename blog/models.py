@@ -3,22 +3,17 @@ from django.db import models
 from django.contrib.auth.models import User
 from ckeditor.fields import RichTextField
 from django.core.validators import FileExtensionValidator
-from django.contrib.auth import get_user_model
-from django.urls import reverse
 
 # Create your models here.
 class Category(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     name = models.CharField(max_length=200, db_index=True, null=True)
     discription = models.TextField(null=True, blank=True)
     updated = models.DateTimeField(auto_now=True, null=True)
     created = models.DateTimeField(auto_now_add=True, null=True)
-    slug = models.SlugField(max_length=200, unique=True, null=True)
 
     class Meta:
         verbose_name_plural = 'categories'
-
-    def get_absolute_url(self):
-        return reverse('category_list', args=[self.slug])
 
     def __str__(self) -> str:
         return self.name
@@ -95,4 +90,9 @@ class CommentModel(models.Model):
 class Follower(models.Model):
     follower = models.ForeignKey(User, related_name='follower', on_delete=models.CASCADE)
     following = models.ForeignKey(User, related_name='following', on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+class CategoryFollower(models.Model):
+    category = models.ForeignKey(Category, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)

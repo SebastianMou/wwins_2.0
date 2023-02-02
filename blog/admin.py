@@ -1,10 +1,7 @@
 from django.contrib import admin
-from .models import PostModel, ProfileModel ,GoalsModel , CommentModel, Category, Follower
+from .models import PostModel, ProfileModel ,GoalsModel , CommentModel, Category, Follower, CategoryFollower
 # Register your models here.
-@admin.register(Category)
-class CategoryAdmin(admin.ModelAdmin):
-    list_display = ['name', 'updated', 'created']
-    # prepopulated_fields = {'slug': ('name',)}
+admin.site.register(Category)
 
 @admin.register(ProfileModel)
 class ProfileModelAdmin(admin.ModelAdmin):
@@ -19,6 +16,7 @@ class PostModelAdmin(admin.ModelAdmin):
     list_display = ['user','title', 'content', 'date_stamp']
 
 admin.site.register(CommentModel)
+admin.site.register(CategoryFollower)
 
 @admin.register(Follower)
 class FollowerAdmin(admin.ModelAdmin):

@@ -4,7 +4,11 @@ from django.contrib.auth import views as auth_view
 
 urlpatterns = [
      path('', views.home, name='home'),
-     path('search/<slug:category_slug>/', views.category_list, name='category_list'),
+     path('search/<int:pk>/', views.category_list, name='category_list'),
+     path('following_users/', views.following_users, name='following_users'),
+     path('follow_category/<int:pk>/', views.follow_category, name='follow_category'),
+     path('unfollow_category/<int:pk>/', views.unfollow_category, name='unfollow_category'),
+     path('edit/<int:pk>/', views.edit_category, name='edit'),
      path('search_p&c/', views.search_pc, name='search_pc'),
      path('complaint/', views.complaint, name='complaint'),
      path('create_category/', views.create_category,    name='create_category'),

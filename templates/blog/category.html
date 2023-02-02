@@ -66,8 +66,50 @@
 </style>
 <br><br>
 <div>
-    <h1 style="color: white;"><center>{{ category }}</center></h1>
-    <hr style="color: white;">
+    <h1 style="color: white;">
+        <center>{{ category }}
+            {% if category.user == user %}
+            <button type="button" class="btn btn-link" data-bs-toggle="modal" data-bs-target="#firstModal">
+                <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
+                    <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
+                    <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z"/>
+                </svg>
+            </button>
+            {% endif %}
+            {% if user_is_following_category %}
+                <a class="btn btn-danger" href="{% url 'unfollow_category' category.id %}">Unfollow</a>
+            {% else %}
+                <a class="btn btn-success" href="{% url 'follow_category' category.id %}">Follow</a>
+            {% endif %}
+
+        </center>
+    </h1>
+
+{% if category.user == user %}
+<!-- Modal -->
+<div class="modal fade" id="firstModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="firstModal" aria-hidden="true">
+    <div class="modal-dialog">
+        <div style="background-color: #13171f;"  class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="firstModal">Modal title</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form method="post">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <input class="btn btn-info form-control" type="submit" value="save">
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<hr style="color: white;">
 </div>
 <section id="hero-animated">
     <div class="row">
@@ -83,17 +125,17 @@
                     <br>
                     <div class="twPc-divStats">
                         <div class="row">
-                            <a class="col" href="https://twitter.com/mertskaplan" title="9.840 Tweet">
+                            <a class="col" href="#" title="9.840 Tweet">
                                 <span class="twPc-StatLabel twPc-block">Tweets</span>
                                 <hr>
                                 <span class="twPc-StatValue">9.840</span>
                             </a>
-                            <a class="col" href="https://twitter.com/mertskaplan/following" title="885 Following">
+                            <a class="col" href="#" title="885 Following">
                                 <span class="twPc-StatLabel twPc-block">Following</span>
                                 <hr>
                                 <span class="twPc-StatValue">885</span>
                             </a>
-                            <a class="col" href="https://twitter.com/mertskaplan/followers" title="1.810 Followers">
+                            <a class="col" href="#" title="1.810 Followers">
                                 <span class="twPc-StatLabel twPc-block">Followers</span>
                                 <hr>
                                 <span class="twPc-StatValue">1.810</span>
@@ -139,7 +181,7 @@
                 <div class="card-body">
                     <p>Subreddits</p>
                     {% for c in categories %}
-                    <a href="{{ c.get_absolute_url }}">
+                    <a href="{% url 'category_list' c.pk %}">
                         <h5>{{ c.name|title }}</h5>
                     </a>
                     {% endfor %}
@@ -212,7 +254,7 @@
                 <div class="card-body">
                     <p>Subreddits</p>
                     {% for c in categories %}
-                    <a href="{{ c.get_absolute_url }}">
+                    <a href="{% url 'category_list' c.pk %}">
                         <h5>{{ c.name|title }}</h5>
                     </a>
                     {% endfor %}
@@ -237,9 +279,12 @@
                     <div class="card-header d-flex align-items-center">
                         <img src="{{ post.user.profilemodel.user_image.url }}" class="rounded-circle mr-3" width="20"
                             height="20">
-                        <div class="d-flex flex-column">
+                        <div class="d-flex">
                             <a href="{% url 'user_profile' post.user_id %}">
-                                <small>@{{ post.user }} // {{ post.category }}</small>
+                                <small>@{{ post.user }} //</small>
+                            </a>
+                            <a style="padding-left: 4px;" href="{% url 'category_list' post.category.pk %}">
+                                <small>{{ post.category }}</small>
                             </a>
                             <small style="position: absolute; top: 0; right: 0; padding: 8px;">
                                 {{ post.date_stamp|naturaltime }}
@@ -294,40 +339,27 @@
         </div>
         <div class="col-12 col-md-3">
             <div class="card">
-                <div style="padding: 12px;" class="input-group mb-3">
-                    <input type="text" class="form-control" placeholder="Recipient's username" aria-label="Recipient's username" aria-describedby="basic-addon2">
-                    <div class="input-group-append">
-                      <button class="btn btn-outline-secondary" type="button">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
-                            <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
-                        </svg>
-                      </button>
-                    </div>
-                </div>
-            </div>
-            <br>
-            <div class="card">
                 <div class="card-body">
                     <p>{{ category.discription|slice:":200" }}...</p>
-                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+                    <button type="button" class="btn btn-primary form-control" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
                         Principios de la Comunidad
                     </button>
                     <!-- Modal -->
                     <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-                        <div class="modal-dialog">
-                        <div style="background-color: black;" class="modal-content">
-                            <div class="modal-header">
-                            <h5 class="modal-title" id="staticBackdropLabel">Modal title</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+                            <div style="background-color: #13171f;" class="modal-content">
+                                <div class="modal-header">
+                                <h5 class="modal-title" id="staticBackdropLabel">Rules of thread</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <p>{{ category.discription }}</p>
+                                </div>
+                                <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                <button type="button" class="btn btn-primary">Understood</button>
+                                </div>
                             </div>
-                            <div class="modal-body">
-                                <p>{{ category.discription }}</p>
-                            </div>
-                            <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                            <button type="button" class="btn btn-primary">Understood</button>
-                            </div>
-                        </div>
                         </div>
                     </div>
                 </div>

@@ -79,9 +79,9 @@
     <div class="container">
         <nav class="nav nav-tabs" id="nav-tab" role="tablist">
             <a class="nav-link active" id="nav-home-tab" data-bs-toggle="tab" href="#nav-home" role="tab"
-                aria-controls="nav-home" aria-selected="true">Home</a>
+                aria-controls="nav-home" aria-selected="true">Main</a>
             <a class="nav-link" id="nav-profile-tab" data-bs-toggle="tab" href="#nav-profile" role="tab"
-                aria-controls="nav-profile" aria-selected="false">Profile</a>
+                aria-controls="nav-profile" aria-selected="false">Goals</a>
             <a class="nav-link disabled" id="nav-disabled-tab" data-bs-toggle="tab" href="#nav-disabled" role="tab"
                 aria-controls="nav-disabled" tabindex="-1" aria-disabled="true">Disabled</a>
         </nav>
@@ -96,9 +96,12 @@
                             <div class="card-header d-flex align-items-center">
                                 <img src="{{ post.user.profilemodel.user_image.url }}" class="rounded-circle mr-3" width="20"
                                     height="20">
-                                <div class="d-flex flex-column">
+                                <div class="d-flex">
                                     <a href="{% url 'user_profile' post.user_id %}">
-                                        <small>@{{ post.user }} // {{ post.category }}</small>
+                                        <small>@{{ post.user }} //</small>
+                                    </a>
+                                    <a style="padding-left: 4px;" href="{% url 'category_list' post.category.pk %}">
+                                        <small>{{ post.category }}</small>
                                     </a>
                                     <small style="position: absolute; top: 0; right: 0; padding: 8px;">
                                         {{ post.date_stamp|naturaltime }}
@@ -150,7 +153,7 @@
                         <div class="card d-flex justify-content-between" style="padding: 12px;">
                             <h3>Subreddit</h3>
                             {% for c in categories %}
-                            <a href="{{ c.get_absolute_url }}">
+                            <a href="{% url 'category_list' c.pk %}">
                                 <h5>r/<u>{{ c.name|title }}</u></h5>
                             </a>
                             {% endfor %}
