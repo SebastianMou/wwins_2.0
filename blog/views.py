@@ -1,5 +1,7 @@
 from django.shortcuts import render, redirect
-from .models import PostModel, ProfileModel, GoalsModel, Category, Follower, CategoryFollower
+from .models import (PostModel, ProfileModel,
+GoalsModel, Category, Follower, CategoryFollower,
+CommentModel, ReplyModel)
 from django.contrib.auth.models import User
 from .forms import (UserRegisterForm, PostForm, UserUpdateForm, 
 ProfileUpdateForm, GoalsForm, GoalUpdateForm, PostUpdateForm, CommentForm, CategoryForm)
@@ -12,6 +14,7 @@ from django.urls import reverse
 from django.core.mail import send_mail
 from django.db.models import Count
 from django.urls import reverse_lazy
+from django.db.models import Q
 
 from django.template.loader import render_to_string
 from django.contrib.sites.shortcuts import get_current_site
@@ -55,15 +58,31 @@ def home(request):
         categories_following_count = categories_following.count()
         followers = Follower.objects.filter(follower=current_user)
         following = [f.following for f in followers]
+        # Get the users you are following
+        followed_users = request.user.following.all()
+        # Get all the posts from the followed users
+        followers_req = Follower.objects.filter(follower=request.user)
+        followed_users = [f.following for f in followers_req]
+        posts = PostModel.objects.filter(user__in=followed_users)
+        # Get the categories that the user is following
+        followed_categories = [c.category for c in categories_following]
+        # Get all the posts from the followed categories
+        posts_of_followed_categories = PostModel.objects.filter(category__in=followed_categories)
+        # Combine the posts from followed users and categories
+        posts = posts | posts_of_followed_categories
     else:
+        followed_users = None
+        followers_req = None
+        category1 = Category.objects.get(id=21)
+        category2 = Category.objects.get(id=22)
+        posts = PostModel.objects.filter(category__in=[category1, category2])
+
         followers = None
         following = None
         categories_following = None
         user_post_count = None
         categories_following_count = None
-        posts = PostModel.objects.all()
 
-    posts = PostModel.objects.all()
     context = {
         'posts': posts,
         'user_post_count': user_post_count,
@@ -73,6 +92,39 @@ def home(request):
         'categories_following_count': categories_following_count,       
     }
     return render(request, 'blog/home.html', context)
+
+def popular(request):
+    categories = Category.objects.all()[:10]
+
+    current_user = request.user
+    if request.user.is_authenticated:
+        user_post_count = PostModel.objects.filter(user=current_user).count()
+        categories_following = CategoryFollower.objects.filter(user=current_user)
+        categories_following_count = categories_following.count()
+        followers = Follower.objects.filter(follower=current_user)
+        following = [f.following for f in followers]
+        category1 = Category.objects.get(id=21)
+        category2 = Category.objects.get(id=22)
+        posts = PostModel.objects.filter(category__in=[category1, category2])
+    else:
+        category1 = Category.objects.get(id=21)
+        category2 = Category.objects.get(id=22)
+        posts = PostModel.objects.filter(category__in=[category1, category2])
+        followers = None
+        following = None
+        categories_following = None
+        user_post_count = None
+        categories_following_count = None
+
+    context = {
+        'posts': posts,
+        'user_post_count': user_post_count,
+        'categories': categories,
+        'categories_following': categories_following,
+        'following': following, 
+        'categories_following_count': categories_following_count,       
+    }
+    return render(request, 'blog/popular.html', context)
 
 @login_required
 def create_category(request):
@@ -93,12 +145,25 @@ def category_list(request, pk):
     category = get_object_or_404(Category, pk=pk)
     posts = PostModel.objects.filter(category=category)
 
+    category_obj = Category.objects.get(id=pk)
+    followers_count = CategoryFollower.objects.filter(category=category_obj).count()
+
+    posts_count = PostModel.objects.filter(category=category_obj).count()
+
     if request.user.is_authenticated:
+        category_obj = Category.objects.get(id=pk)
+        followers_count = CategoryFollower.objects.filter(category=category_obj).count()
+
+        posts_count = PostModel.objects.filter(category=category_obj).count()
         user_is_following_category = CategoryFollower.objects.filter(
             category=category,
             user=request.user
         ).exists()
     else:
+        category_obj = Category.objects.get(id=pk)
+        followers_count = CategoryFollower.objects.filter(category=category_obj).count()
+
+        posts_count = PostModel.objects.filter(category=category_obj).count()
         user_is_following_category = False
 
     if request.method == "POST":
@@ -115,6 +180,8 @@ def category_list(request, pk):
         'posts': posts,
         'categories': categories,
         'form': form,
+        'followers_count': followers_count,
+        'posts_count': posts_count,
         'user_is_following_category': user_is_following_category,
     }
     return render(request, 'blog/category.html', context)
@@ -190,7 +257,7 @@ def activate(request, uidb64, token):
     else:
         messages.error(request, 'Activation link is invalid!')
     
-    return redirect('/')
+    return render(request, 'blog/start_following')
 
 def activateEmail(request, user, to_email):
     mail_subject = 'Activate your user account.'
@@ -370,10 +437,7 @@ def unfollow_category(request, pk):
 def following_users(request):
     user = request.user
     category_followers = CategoryFollower.objects.filter(user=user)
-    # following_categories = [follower.category for follower in category_followers]
-    # following_users = User.objects.filter(categoryfollower__category__in=following_categories).distinct()
     context = {
-        # 'following_users': following_users,
         'category_followers': category_followers,
     }
     return render(request, 'blog/following_users.html', context)
@@ -389,6 +453,9 @@ def like_post(request, pk):
 
 def post_detail(request, pk):
     likes_connected = get_object_or_404(PostModel, id=pk)
+
+    comments = CommentModel.objects.filter(parent_comment=None)
+    replies = ReplyModel.objects.all()
 
     liked = False
     if likes_connected.likes.filter(id=pk).exists():
@@ -411,6 +478,8 @@ def post_detail(request, pk):
         'c_form': c_form,
         'total_likes': likes_connected.total_likes(),
         'post_is_liked': liked,
+        'comments': comments,
+        'replies': replies,
     }
     return render(request, 'blog/post_detail.html', context)
 
@@ -463,3 +532,15 @@ def complaint(request):
         return render(request, 'blog/email_sent.html')
 
     return render(request, 'blog/complaint.html')
+
+@login_required
+def start_following(request):
+    categories = Category.objects.filter(
+        Q(name__startswith='Self-Help') | Q(name__startswith='Django') | 
+        Q(name__startswith='Fitness And Exercise') | Q(name__startswith='Mental Health And Wellness') |
+        Q(name__startswith='Personal finance and budgeting') | Q(name__startswith='Career And Professional Development')
+    )[:10]
+    context = {
+        'categories': categories,
+    }
+    return render(request, 'blog/start_following.html', context)

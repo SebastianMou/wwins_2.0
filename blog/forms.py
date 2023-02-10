@@ -160,4 +160,4 @@ class CategoryForm(forms.ModelForm):
     }))
     class Meta:
         model = Category
-        fields = ['name', 'discription']
+        fields = ['name', 'discription', 'category_img']

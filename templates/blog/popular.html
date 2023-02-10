@@ -301,7 +301,7 @@
                 <a href="/">
                     <h3 style="color: white; padding-right: 14px;"><u>Following</u></h3>
                 </a>
-                <a href="{% url 'popular' %}">
+                <a href="">
                     <h3 style="color: white;"><u>Popular</u></h3>
                 </a>
             </div>
@@ -314,7 +314,7 @@
                             <a href="{% url 'user_profile' post.user_id %}">
                                 <small>@{{ post.user }} //</small>
                             </a>
-                            <a style="padding-left: 4px;" href="{% url 'category_list' post.category.pk %}">
+                            <a style="padding-left: 4px;" href="">
                                 <small>{{ post.category }}</small>
                             </a>
                             <small style="position: absolute; top: 0; right: 0; padding: 8px;">

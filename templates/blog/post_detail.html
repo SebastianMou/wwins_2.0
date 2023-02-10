@@ -88,7 +88,7 @@
                         </form>
                         {% else %}
                         <div class="alert alert-danger" role="alert">
-                            not login in
+                            to comment <a href="{% url 'login' %}">login</a>
                         </div>
                         {% endif %}
                         <br>
@@ -110,13 +110,24 @@
                                 <p class="mb-0">{{ comment.content|safe }}</p>
                             </div>
                         </div>
-                        <hr style="color: white;">
+                        {% if user.is_authenticated %}
+                            <form style="padding-left: 25px;" method="POST">
+                                {% csrf_token %}
+                                {{ c_form.media }}
+                                {{ c_form|crispy }}
+                                <input type="hidden" name="parrent_id" value="{{ parent_comment.pk }}">
+                                <input class="btn btn-danger btn-sm" type="submit" value="reply">
+                            </form>
+                            <hr style="color: white;">
+                        {% else %}
+                            <hr style="color: white;">
+                        {% endif %}
                         {% endfor %}
+                        <hr>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
-
 {% endblock %}

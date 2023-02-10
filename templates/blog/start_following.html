@@ -1,18 +1,19 @@
-{% extends '../base.html' %}
-{% load crispy_forms_tags %}
+{% extends './base.html' %}
 {% load static %}
 
 {% block contect %}
 <style>
-    .form_register {
-        border-radius: 28px;
-        border:1px solid gray;
+    .card {
+        width: 600px;
+        margin: auto;
+        width: 50%;
     }
-    .form_register:hover {
-        border: 1px solid #03dac5;
+    .btn-light {
+        border-radius: 25px;
+        border: 2px solid green;
     }
 </style>
-<br>
+
 <div style="display: flex; justify-content: center;" class="bubble">
     <span style="--i:11;"></span>
     <span style="--i:12;"></span>
@@ -66,27 +67,25 @@
     <span style="--i:18;"></span>
     <span style="--i:22;"></span>
     <span style="--i:18;"></span>
-  </div>
+</div>
 <section id="hero-animated">
-    <br>
-    <div class="box-login">
-        <div class="form">
-            <form method="POST">
-                <h1 style="color: #03dac5; padding: 5px;" align="center">Login</h1>
-                {% csrf_token %}
-                <input type="text" name="username" class="form_register form-control bg-dark text-white" placeholder="Username">
-                <br>
-                <input type="password" name="password" class="form_register form-control bg-dark text-white" placeholder="password">
-                {% if form.errors %}
-                    <p>username or password incorect</p>
-                {% endif %}
-                <br>
-                <input class="form-control btn btn-info" type="submit" value="login">
-                <br><br>
-                <p align="center">dont have a account <a href="{% url 'register' %}">register</a></p>
-                <p align="center">did you forget you password <a href="{% url 'password_reset' %}">forgot password?</a></p>
-            </form>
+    <div class="container">
+        <div style="background-color: #13171f;" class="card">
+            <div class="card-body">
+                <center>
+                    <h3>Get Started</h3>
+                    <p>Be a part of a society</p>
+                </center>
+                <div id="societys" class="row">
+                    {% for c in categories %}
+                    <div class="col-6">
+                        <center><p class="btn btn-light">{{ c.name }}</p></center>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
         </div>
     </div>
 </section>
+
 {% endblock %}

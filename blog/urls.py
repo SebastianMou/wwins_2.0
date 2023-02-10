@@ -4,6 +4,7 @@ from django.contrib.auth import views as auth_view
 
 urlpatterns = [
      path('', views.home, name='home'),
+     path('popular/', views.popular, name='popular'),
      path('search/<int:pk>/', views.category_list, name='category_list'),
      path('following_users/', views.following_users, name='following_users'),
      path('follow_category/<int:pk>/', views.follow_category, name='follow_category'),
@@ -23,17 +24,16 @@ urlpatterns = [
      path('unfollow/<int:user_id>/', views.unfollow_user, name='unfollow_user'),
      path('create_post/', views.create_post, name='create_post'),
      path('create_a_goal/', views.create_a_goal, name='create_a_goal'),
-
      path('all_goals/', views.all_goals, name='all_goals'),
      path('goal_detail/<int:pk>', views.goal_detail, name='goal_detail'),
      path('goal_edit/<int:pk>', views.goal_edit, name='goal_edit'),
-     path('goal_delete/<int:goal_id>/', views.goal_delete, name='goal_delete'),
-     
+     path('goal_delete/<int:goal_id>/', views.goal_delete, name='goal_delete'),     
      path('post_detail/<int:pk>', views.post_detail, name='post_detail'),
      path('post_edit/<int:pk>', views.post_edit, name='post_edit'),
      path('like_post/<int:pk>/', views.like_post, name='like_post'),
      path('community_guidelines/', views.community_guidelines, name='community_guidelines'),
-
+     path('start_following/', views.start_following, name='start_following'),
+     
      path('activate/<uidb64>/<token>', views.activate, name='activate'),
 
      path('password_reset/', auth_view.PasswordResetView.as_view(template_name='blog/users/password_reset.html'),
